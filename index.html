@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1524">
+  <meta name="description" content="한국 시각장애인용 음향신호기 BLE 탐지 연구용, 읽기 전용 웹앱">
+  <title>APS BLE Lab | 음향신호기 탐지</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;color-scheme:dark;--bg:#091320;--panel:#121f30;--panel2:#16263a;--fg:#ebf4ff;--soft:#9db2c9;--accent:#70e0d0;--border:#2a3e54;--warn:#facb84}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(ellipse 800px 400px at 60% -180px,#204d58 0%,transparent 76%),var(--bg);color:var(--fg);min-height:100vh}
+    main{max-width:900px;margin:auto;padding:24px 18px 90px}h1,h2,h3,p{margin:0}h1{font-size:clamp(26px,4vw,40px);line-height:1.15;letter-spacing:-1.2px}h2{font-size:18px;margin:0 0 15px}h3{font-size:14px;margin-bottom:9px}p{line-height:1.6}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:24px}.brand{font-size:12px;font-weight:850;letter-spacing:2px;color:var(--accent)}.version{font-size:12px;color:var(--soft)}.pill{border:1px solid #317b70;border-radius:100px;color:#a5f3e3;padding:6px 10px;font-size:12px;font-weight:750;white-space:nowrap}.lead{color:var(--soft);font-size:14px;margin-top:12px;max-width:730px}.notice{border:1px solid #806a45;background:#272319;color:#ffe1a8;padding:13px 16px;margin-top:22px;border-radius:13px;font-size:13px;line-height:1.55}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:22px}.card{border:1px solid var(--border);border-radius:19px;background:var(--panel);padding:20px;min-width:0;box-shadow:0 13px 35px #02091330}.muted{color:var(--soft);font-size:13px}.support{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 0}.chip{font-size:12px;border-radius:100px;padding:6px 10px;background:#21364b;color:#c9dcea}.chip.ok{background:#153d36;color:#9df2d8}.chip.no{background:#4b3028;color:#ffcbad}.stack{display:grid;gap:12px}.field label{font-size:12px;font-weight:750;display:block;margin-bottom:8px;color:#b8cddd}input[type=text],input[type=number]{width:100%;min-width:0;padding:13px;border:1px solid #39536a;background:#0b1828;border-radius:11px;color:#f2f9ff;font:inherit;font-size:15px;outline:none}input:focus{border-color:var(--accent)}.help{font-size:12px;color:var(--soft);line-height:1.5;margin-top:6px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{border:1px solid #39556a;padding:13px 12px;border-radius:11px;font:inherit;font-size:13px;font-weight:760;color:#e6f6fa;background:#223a51;cursor:pointer;min-height:45px}button.primary{background:var(--accent);color:#09212a;border-color:var(--accent)}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible{outline:2px solid white;outline-offset:2px}.buttonrow{display:flex;gap:8px;flex-wrap:wrap}.buttonrow button{flex:1 1 125px}.checkbox{display:flex;align-items:center;gap:9px;margin:10px 0;font-size:13px;color:#bcd0dc}.checkbox input{accent-color:#6de4ce;width:17px;height:17px}.statusline{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:13px}.statusdot{width:9px;height:9px;border-radius:50%;background:#fcb969;box-shadow:0 0 0 4px #ffbd6520}.statusdot.good{background:#69e8c7;box-shadow:0 0 0 4px #69e8c720}.detail{border:1px dashed #375369;border-radius:12px;background:#0d1b2a;padding:14px;overflow:hidden;margin-top:12px}.detail .name{font-size:17px;font-weight:800;overflow-wrap:anywhere}.id{color:var(--soft);font-family:ui-monospace,Consolas,monospace;font-size:12px;margin-top:8px;overflow-wrap:anywhere}.data{display:grid;gap:10px}.result{padding:12px 0;border-bottom:1px solid #27384c;display:grid;gap:5px}.result:last-child{border-bottom:0}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.label{font-size:12px;color:var(--soft)}.value{font-size:14px;font-weight:750}.payload{font-family:ui-monospace,Consolas,monospace;color:#abc7db;font-size:11px;overflow-wrap:anywhere;line-height:1.6}.empty{padding:18px;background:#0f1b29;border-radius:10px;color:#94aabd;font-size:13px;line-height:1.7}.log{background:#081522;border:1px solid #284158;border-radius:12px;min-height:110px;max-height:235px;overflow:auto;padding:12px;font:12px/1.65 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;color:#afc9da}.foot{font-size:12px;color:var(--soft);margin-top:24px;line-height:1.65}.foot a{color:#8cdded}.section{margin-top:16px}.hidden{display:none!important}.split{display:flex;justify-content:space-between;gap:12px;align-items:center}.spacer{margin-top:12px}.link{color:#8be5db;text-decoration:underline;text-underline-offset:3px}.tag{display:inline-block;margin:8px 0;padding:4px 8px;background:#283342;color:#ffdfa2;border-radius:8px;font-size:11px}code{font-family:ui-monospace,Consolas,monospace;color:#afeddb}details{margin-top:12px;color:#a8c0d3;font-size:13px}summary{cursor:pointer;color:#d9edff;font-weight:650}details p{margin-top:6px}a{color:#9ce8e4}
+    @media(max-width:740px){main{padding:20px 14px 60px}.grid{grid-template-columns:1fr}.card{padding:17px}.buttons{grid-template-columns:1fr}.top{padding-bottom:20px}}
+  </style>
+</head>
+<body>
+<main>
+  <header class="top"><div class="brand">APS / BLE LAB</div><div class="pill">READ-ONLY · v0.1</div></header>
+  <h1>보행신호기 BLE 탐지</h1>
+  <p class="lead">경찰청 음향신호기 R01에 정의된 <code>AHG001+</code> 광고 이름 규칙으로 주변 기기를 탐지하는 연구용 페이지입니다. 장치 연결·제어·데이터 쓰기는 구현하지 않았습니다.</p>
+  <div class="notice" role="note">⚠️ <strong>횡단 안전 판단용이 아닙니다.</strong> 검색에 성공해도 해당 장치의 설치 위치, 신호 상태, 적색·녹색 여부는 확인되지 않습니다. 도로에서는 안전한 인도에서만 사용하세요.</div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>01 · 탐지 설정</h2>
+      <div class="stack">
+        <div class="field"><label for="prefix">광고 이름 접두어</label><input type="text" id="prefix" autocomplete="off" spellcheck="false" value="AHG001+" maxlength="40"><div class="help">경찰청 R01 / SafeLight 확인값. R03 적용 여부와 현장 활성화 여부는 미검증.</div></div>
+        <div class="field"><label for="min-rssi">목록 표시 RSSI 기준 (dBm)</label><input type="number" id="min-rssi" value="-100" min="-125" max="0" step="5"><div class="help">실험적 연속 스캔 결과를 화면에서 걸러주는 표시 기준이며, 실제 거리나 브라우저 스캔 범위를 제한하지 않습니다.</div></div>
+      </div>
+      <div class="support" id="support" aria-live="polite"></div>
+      <div class="section buttons">
+        <button type="button" class="primary" id="choose" disabled>장치 선택하기 (기본)</button>
+        <button type="button" id="scan" disabled>광고 연속 스캔 (실험)</button>
+      </div>
+      <label class="checkbox"><input type="checkbox" id="all-scan"> 실험적 연속 스캔에서만 모든 광고 보기 (이름 필터 해제)</label>
+      <label class="checkbox"><input type="checkbox" id="hide-known" checked> 이미 구분한 주변 장치명 숨기기 (표시만, 재검색 가능)</label>
+      <div class="buttonrow spacer">
+        <button id="watch" type="button" disabled>선택 장치 광고 관찰</button>
+        <button id="stop" type="button" disabled>관찰 중지</button>
+      </div>
+      <div class="statusline"><span class="statusdot" id="statusdot"></span><span id="status" aria-live="polite">브라우저 상태 확인 중</span></div>
+      <details><summary>모드 차이와 브라우저 설정</summary><p><strong>기본:</strong> Chrome의 장치 선택 창에서 이름이 일치하는 장치를 확인. GATT에 연결하지 않음.</p><p><strong>실험:</strong> <code>requestLEScan()</code> 지원 시 광고 데이터와 RSSI를 연속 표시. Android Chrome에서 <code>chrome://flags/#enable-experimental-web-platform-features</code>를 켜야 할 수 있으며 지원이 보장되지 않음.</p><p><strong>선택 장치 관찰:</strong> <code>watchAdvertisements()</code> 지원 시 선택한 장치의 광고를 관찰. 지원하지 않는 브라우저는 동작하지 않음.</p><p>Web Bluetooth 사용에는 <strong>HTTPS 또는 localhost</strong> 환경 및 사용자의 직접적인 클릭이 필요합니다.</p></details>
+    </section>
+    <section class="card">
+      <h2>02 · 선택된 장치</h2>
+      <div class="detail" id="selection"><div class="name">아직 선택되지 않음</div><div class="id">기본 모드를 눌러 주변 장치 선택 창을 열어 보세요.</div></div>
+      <h3 class="spacer">탐지 결과</h3>
+      <div class="split"><span class="muted" id="count">0개</span><span class="tag">신호 상태: 미확인</span></div>
+      <div class="data" id="results"><div class="empty">아직 수집된 광고 패킷이 없어요. 기본 장치 선택만으로는 광고 원본이나 RSSI가 제공되지 않을 수 있습니다.</div></div>
+    </section>
+  </div>
+  <section class="card section">
+    <div class="split"><h2>03 · 세션 기록</h2><div class="buttonrow"><button type="button" id="export">JSON 내보내기</button><button type="button" id="clear">초기화</button></div></div>
+    <div class="log" id="log" role="log" aria-live="polite"></div>
+    <div class="help">데이터는 서버에 자동 업로드되지 않고 이 탭의 메모리에만 보관됩니다. JSON 공유 시 기기 식별자 등 개인정보를 확인하세요.</div>
+  </section>
+  <footer class="foot">
+    <strong>범위:</strong> 장치 이름·광고 패킷을 이용한 수동 식별만 수행. 무선신호 송출, GATT 연결, Characteristic 읽기/쓰기, 제어 명령 기능은 없음.<br>
+    <strong>근거:</strong> <a href="https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00719829&amp;bidPbancOrd=000&amp;fileSeq=4&amp;fileType=" target="_blank" rel="noopener noreferrer">경찰청 R01 표준규격 (2024, 25쪽)</a> · <a href="https://github.com/hanmango-o/SafeLight-README/blob/master/DOCS.md" target="_blank" rel="noopener noreferrer">SafeLight 개발 문서</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice" target="_blank" rel="noopener noreferrer">MDN requestDevice</a>.<br>
+    <strong>제한:</strong> 이 버전에서는 교차로 신호정보를 표시하지 않으며, R03 규격과 최신 설치 장비의 호환 여부는 확인되지 않았습니다.
+  </footer>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const store = new Map();
+const historyLog = [];
+const observations = []; // raw BLE advertising event timeline, max 800 recent samples
+let chosen = null;
+let scannerSession = null;
+let watcher = null;
+let receiverAttached = false;
+let deviceReceiver = null;
+const MAX_ENTRIES = 350;
+function record(message) {
+  const line = `[${new Date().toLocaleTimeString('ko-KR', {hour12:false})}] ${message}`;
+  historyLog.push(line); if(historyLog.length>MAX_ENTRIES)historyLog.shift();
+  $('log').textContent = historyLog.join('\n');$('log').scrollTop=$('log').scrollHeight;
+}
+function status(message,good=false) {
+  $('status').textContent=message;$('statusdot').className='statusdot'+(good?' good':'');record(message);
+}
+function support() {
+  const list=[['HTTPS/안전한 환경',window.isSecureContext],['Web Bluetooth',!!navigator.bluetooth],['광고 연속 스캔',!!navigator.bluetooth?.requestLEScan],['선택 장치 광고 관찰',!!(window.BluetoothDevice && BluetoothDevice.prototype.watchAdvertisements)]];
+  $('support').replaceChildren(...list.map(([label,ok])=>{
+    const el=document.createElement('span');el.className='chip '+(ok?'ok':'no');el.textContent=`${ok?'✓':'×'} ${label}`;return el;
+  }));
+  if(!window.isSecureContext){status('HTTPS로 열어야 Bluetooth 탐지가 가능합니다.');return;}
+  if(!navigator.bluetooth){status('이 브라우저는 Web Bluetooth를 지원하지 않습니다. Android Chrome으로 열어 주세요.');return;}
+  status('기본 장치 선택 모드를 사용할 수 있습니다.',true);
+  $('choose').disabled=false;$('scan').disabled=!navigator.bluetooth.requestLEScan;
+}
+function encodeHex(view) {
+  if (!view)return '';
+  const u8 = view instanceof DataView ? new Uint8Array(view.buffer,view.byteOffset,view.byteLength) : new Uint8Array(view.buffer??view);
+  return Array.from(u8,b=>b.toString(16).padStart(2,'0')).join(' ').toUpperCase();
+}
+function fromMap(m){const result={};if(!m?.forEach)return result;m.forEach((view,key)=>{result[String(key)]=encodeHex(view)});return result;}
+function pushAdvertisement(event,origin) {
+  const device=event.device;
+  const id=String(device?.id ?? event.name ?? '(알 수 없음)');
+  const name=String(event.name || device?.name || '(이름 없음)');
+  const rssi=Number.isFinite(event.rssi)?event.rssi:null;
+  const data={time:new Date().toISOString(),origin,name,id,rssi,txPower:event.txPower??null,uuids:[...(event.uuids||[])],manufacturerData:fromMap(event.manufacturerData),serviceData:fromMap(event.serviceData)};
+  let entry=store.get(id);
+  if(!entry)entry={name,id,lastRssi:rssi,packets:0,lastTime:null,lastData:null};
+  entry.name=name;entry.lastRssi=rssi;entry.packets++;entry.lastTime=data.time;entry.lastData=data;
+  store.set(id,entry);
+  observations.push(data);if(observations.length>800)observations.shift();
+  renderResults();
+}
+function renderResults() {
+  const min=Number($('min-rssi').value)||-100;
+  const known=['SEGWAY IOT','AD_401_CST','ADT V4.2','GIGA GENIE','BUDS3','JABRA','BYD BLE3'];
+  const list=[...store.values()].filter(d=>(d.lastRssi===null||d.lastRssi>=min)&&(!$('hide-known').checked||!known.some(k=>d.name.toUpperCase().includes(k)))).sort((a,b)=>(b.lastRssi??-999)-(a.lastRssi??-999));
+  $('count').textContent=`${list.length}개 표시 / ${store.size}개 탐지`;
+  if(!list.length){$('results').innerHTML='<div class="empty">표시 조건에 맞는 장치가 없습니다. RSSI 기준을 낮추거나 스캔을 다시 진행해 보세요.</div>';return;}
+  const nodes=list.slice(0,30).map(d=>{
+    const root=document.createElement('div');root.className='result';
+    const top=document.createElement('div');top.className='row';
+    const label=document.createElement('div');label.className='value';label.textContent=d.name;
+    const rssi=document.createElement('span');rssi.className='muted';rssi.textContent=d.lastRssi===null?'RSSI 없음':`${d.lastRssi} dBm`;
+    top.append(label,rssi);
+    const meta=document.createElement('div');meta.className='label';meta.textContent=`${d.packets}개 광고 · 마지막 ${new Date(d.lastTime).toLocaleTimeString('ko-KR',{hour12:false})}`;
+    const payload=document.createElement('div');payload.className='payload';payload.textContent=`UUID: ${d.lastData?.uuids.join(', ')||'없음'} / 제조사: ${JSON.stringify(d.lastData?.manufacturerData||{})}`;
+    root.append(top,meta,payload);return root;
+  });
+  $('results').replaceChildren(...nodes);
+}
+function userError(err){
+  if(err?.name==='NotFoundError')return '조건에 맞는 장치가 발견되지 않았거나 선택을 취소했습니다.';
+  if(err?.name==='NotAllowedError')return '사용자가 권한을 거부했거나 사이트 Bluetooth 사용이 차단됐습니다.';
+  if(err?.name==='SecurityError')return 'HTTPS 또는 브라우저 권한 정책 때문에 차단됐습니다.';
+  return `${err?.name??'오류'}: ${err?.message??String(err)}`;
+}
+function updateSelection(device){
+  const root=$('selection');root.replaceChildren();
+  const name=document.createElement('div');name.className='name';name.textContent=device.name||'(이름 없음)';
+  const id=document.createElement('div');id.className='id';id.textContent=`브라우저별 임시 ID: ${device.id||'제공되지 않음'}`;
+  const info=document.createElement('div');info.className='help';info.textContent='장치를 선택했을 뿐 연결하거나 명령을 전송하지 않았습니다.';
+  root.append(name,id,info);
+  $('watch').disabled=typeof device.watchAdvertisements!=='function';
+}
+$('choose').addEventListener('click',async()=>{
+  if(!navigator.bluetooth)return;
+  try{
+    const prefix=$('prefix').value.trim();
+    const options=prefix?{filters:[{namePrefix:prefix}]}:{acceptAllDevices:true};
+    status(`장치 선택 창을 여는 중${prefix?' · 이름: '+prefix:' · 전체 장치'}...`);
+    const device=await navigator.bluetooth.requestDevice(options);
+    chosen=device;updateSelection(device);status(`선택됨: ${device.name||'(이름 없음)'} · 연결하지 않았습니다.`,true);
+  }catch(err){status(userError(err));}
+});
+function receiver(evt){pushAdvertisement(evt,'requestLEScan')}
+$('scan').addEventListener('click',async()=>{
+  if(!navigator.bluetooth?.requestLEScan){status('실험적 광고 스캔 API가 없습니다. Chrome 실험 기능 설정을 확인해 주세요.');return;}
+  if(scannerSession){status('이미 스캔 중입니다.');return;}
+  try{
+    const prefix=$('prefix').value.trim();const opts={keepRepeatedDevices:true};
+    if($('all-scan').checked||!prefix){opts.acceptAllAdvertisements=true;}else{opts.filters=[{namePrefix:prefix}];}
+    scannerSession=await navigator.bluetooth.requestLEScan(opts);
+    if(!receiverAttached){navigator.bluetooth.addEventListener('advertisementreceived',receiver);receiverAttached=true;}
+    $('stop').disabled=false;$('scan').disabled=true;
+    status('실험적 광고 스캔 실행 중 · 수신 데이터는 이 페이지에만 기록됩니다.',true);
+  }catch(err){scannerSession=null;status(userError(err));}
+});
+$('watch').addEventListener('click',async()=>{
+  if(!chosen?.watchAdvertisements){status('이 기기나 브라우저에서는 광고 관찰 API를 지원하지 않습니다.');return;}
+  if(watcher){status('이미 선택 장치의 광고를 관찰하고 있습니다.');return;}
+  try{
+    const onEvent=e=>pushAdvertisement(e,'watchAdvertisements');
+    chosen.addEventListener('advertisementreceived',onEvent);
+    watcher={device:chosen,listener:onEvent};
+    await chosen.watchAdvertisements();
+    $('stop').disabled=false;$('watch').disabled=true;
+    status('선택 장치 광고 관찰 중 · 연결 없음',true);
+  }catch(err){if(watcher){watcher.device.removeEventListener('advertisementreceived',watcher.listener);watcher=null;}status(userError(err));}
+});
+function stop(){
+  if(scannerSession){try{scannerSession.stop()}catch(e){record('스캔 중지 응답: '+e.message)}scannerSession=null;}
+  if(receiverAttached){navigator.bluetooth?.removeEventListener('advertisementreceived',receiver);receiverAttached=false;}
+  if(watcher){watcher.device.removeEventListener('advertisementreceived',watcher.listener);if(typeof watcher.device.unwatchAdvertisements==='function'){try{watcher.device.unwatchAdvertisements()}catch(e){record('광고 관찰 해제 응답: '+e.message)}}watcher=null;}
+  $('scan').disabled=!navigator.bluetooth?.requestLEScan;$('watch').disabled=!chosen?.watchAdvertisements;$('stop').disabled=true;
+  status('관찰 종료 · 장치에 제어 명령을 보내지 않았습니다.',true);
+}
+$('stop').addEventListener('click',stop);
+$('min-rssi').addEventListener('input',renderResults);
+$('hide-known').addEventListener('change',renderResults);
+$('clear').addEventListener('click',()=>{stop();store.clear();historyLog.length=0;observations.length=0;$('log').textContent='';renderResults();record('세션 데이터 초기화 완료');});
+$('export').addEventListener('click',()=>{
+  const out={format:'aps-ble-lab/1',createdAt:new Date().toISOString(),notice:'연구용 수신 데이터. 특정 보행신호기와의 연결/적녹색 상태가 검증된 것이 아님.',devices:[...store.values()],observations,events:historyLog};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`aps-ble-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  record(`JSON 내보냄 (${out.devices.length}개 장치)`);
+});
+window.addEventListener('pagehide',()=>{try{if(scannerSession)scannerSession.stop()}catch(e){}if(receiverAttached)navigator.bluetooth?.removeEventListener('advertisementreceived',receiver)});
+support();renderResults();
+</script>
+</body>
+</html>
