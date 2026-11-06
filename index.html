@@ -15,16 +15,16 @@
 </head>
 <body>
 <main>
-  <header class="top"><div class="brand">APS / BLE LAB</div><div class="pill">READ-ONLY · v0.1</div></header>
+  <header class="top"><div class="brand">APS / BLE LAB</div><div class="pill">READ-ONLY · v0.2</div></header>
   <h1>보행신호기 BLE 탐지</h1>
-  <p class="lead">경찰청 음향신호기 R01에 정의된 <code>AHG001+</code> 광고 이름 규칙으로 주변 기기를 탐지하는 연구용 페이지입니다. 장치 연결·제어·데이터 쓰기는 구현하지 않았습니다.</p>
+  <p class="lead">경찰청 음향신호기 BLE 규격의 <code>AHG001+</code> 식별 규칙과 UART Service UUID를 활용한 연구용 페이지입니다. 사용자 동의 시 GATT 서비스·Characteristic을 조회하며, <strong>신호기 작동 명령이나 쓰기 기능은 없습니다.</strong> R03 실기기 호환 여부는 미검증입니다.</p>
   <div class="notice" role="note">⚠️ <strong>횡단 안전 판단용이 아닙니다.</strong> 검색에 성공해도 해당 장치의 설치 위치, 신호 상태, 적색·녹색 여부는 확인되지 않습니다. 도로에서는 안전한 인도에서만 사용하세요.</div>
 
   <div class="grid">
     <section class="card">
       <h2>01 · 탐지 설정</h2>
       <div class="stack">
-        <div class="field"><label for="prefix">광고 이름 접두어</label><input type="text" id="prefix" autocomplete="off" spellcheck="false" value="AHG001+" maxlength="40"><div class="help">경찰청 R01 / SafeLight 확인값. R03 적용 여부와 현장 활성화 여부는 미검증.</div></div>
+        <div class="field"><label for="prefix">광고 이름 접두어</label><input type="text" id="prefix" autocomplete="off" spellcheck="false" value="AHG001+" maxlength="40"><div class="help">공개 R01 자료의 탐색 접두어입니다. R03·현장 장치에서 동일하게 광고되는지는 미확인. 검색 실패 시 아래의 전체 기기 선택을 사용해 보세요.</div></div>
         <div class="field"><label for="min-rssi">목록 표시 RSSI 기준 (dBm)</label><input type="number" id="min-rssi" value="-100" min="-125" max="0" step="5"><div class="help">실험적 연속 스캔 결과를 화면에서 걸러주는 표시 기준이며, 실제 거리나 브라우저 스캔 범위를 제한하지 않습니다.</div></div>
       </div>
       <div class="support" id="support" aria-live="polite"></div>
@@ -32,6 +32,7 @@
         <button type="button" class="primary" id="choose" disabled>장치 선택하기 (기본)</button>
         <button type="button" id="scan" disabled>광고 연속 스캔 (실험)</button>
       </div>
+      <label class="checkbox"><input type="checkbox" id="chooser-all"> 기본 장치 선택에서 이름 조건 없이 전체 기기 보기 (UART 접근 권한 요청은 유지)</label>
       <label class="checkbox"><input type="checkbox" id="all-scan"> 실험적 연속 스캔에서만 모든 광고 보기 (이름 필터 해제)</label>
       <label class="checkbox"><input type="checkbox" id="hide-known" checked> 이미 구분한 주변 장치명 숨기기 (표시만, 재검색 가능)</label>
       <div class="buttonrow spacer">
@@ -49,20 +50,47 @@
       <div class="data" id="results"><div class="empty">아직 수집된 광고 패킷이 없어요. 기본 장치 선택만으로는 광고 원본이나 RSSI가 제공되지 않을 수 있습니다.</div></div>
     </section>
   </div>
+
+  <section class="card section" id="gatt-card">
+    <h2>03 · 표준 UART GATT 진단 (읽기 전용)</h2>
+    <p class="muted">기본 모드에서 장치를 먼저 선택하세요. 아래 버튼은 BLE 연결 후 공개된 UART 서비스를 조회하고, 읽기 가능한 Characteristic만 읽습니다. 쓰기·안내음 실행·Notify 구독은 하지 않습니다.</p>
+    <div class="detail">
+      <div class="label">표준 서비스 UUID</div>
+      <div class="payload" id="standard-service">0003cdd0-0000-1000-8000-00805f9b0131</div>
+      <div class="label spacer">후보 Characteristic UUID</div>
+      <div class="payload">0003cdd1-0000-1000-8000-00805f9b0131</div>
+      <div class="payload">0003cdd2-0000-1000-8000-00805f9b0131</div>
+    </div>
+    <div class="buttonrow spacer">
+      <button type="button" id="gatt-connect" class="primary" disabled>GATT 연결 · 속성 조회</button>
+      <button type="button" id="gatt-disconnect" disabled>GATT 연결 해제</button>
+    </div>
+    <div class="statusline"><span id="gatt-status" aria-live="polite">장치 미선택 · 조회 없음</span></div>
+    <div class="data spacer" id="gatt-results"><div class="empty">연결해도 보행신호 색상·잔여시간이 제공된다는 의미는 아닙니다. 해당 값은 별도 검증이 필요합니다.</div></div>
+    <div class="help">⚠️ GATT 연결은 수동 스캔과 달리 기기와 실제 통신합니다. 사용 권한이 있는 실험 장치에서만 실행하세요. 연결에 실패해도 BLE 모듈 부재를 단정할 수 없습니다.</div>
+  </section>
   <section class="card section">
-    <div class="split"><h2>03 · 세션 기록</h2><div class="buttonrow"><button type="button" id="export">JSON 내보내기</button><button type="button" id="clear">초기화</button></div></div>
+    <div class="split"><h2>04 · 세션 기록</h2><div class="buttonrow"><button type="button" id="export">JSON 내보내기</button><button type="button" id="clear">초기화</button></div></div>
     <div class="log" id="log" role="log" aria-live="polite"></div>
     <div class="help">데이터는 서버에 자동 업로드되지 않고 이 탭의 메모리에만 보관됩니다. JSON 공유 시 기기 식별자 등 개인정보를 확인하세요.</div>
   </section>
   <footer class="foot">
-    <strong>범위:</strong> 장치 이름·광고 패킷을 이용한 수동 식별만 수행. 무선신호 송출, GATT 연결, Characteristic 읽기/쓰기, 제어 명령 기능은 없음.<br>
-    <strong>근거:</strong> <a href="https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00719829&amp;bidPbancOrd=000&amp;fileSeq=4&amp;fileType=" target="_blank" rel="noopener noreferrer">경찰청 R01 표준규격 (2024, 25쪽)</a> · <a href="https://github.com/hanmango-o/SafeLight-README/blob/master/DOCS.md" target="_blank" rel="noopener noreferrer">SafeLight 개발 문서</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice" target="_blank" rel="noopener noreferrer">MDN requestDevice</a>.<br>
-    <strong>제한:</strong> 이 버전에서는 교차로 신호정보를 표시하지 않으며, R03 규격과 최신 설치 장비의 호환 여부는 확인되지 않았습니다.
+    <strong>범위:</strong> BLE 광고 탐지, 사용자가 선택한 장치의 GATT 서비스·Characteristic 조회 및 읽기 가능 값의 수동 읽기. 쓰기·제어 요청·Notify 등록 기능은 없음.<br>
+    <strong>R03 공지:</strong> <a href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1001&amp;q_bbscttSn=20260220173906774" target="_blank" rel="noopener noreferrer">경찰청 2026-02-20 표준규격 공지</a> · <strong>근거:</strong> <a href="https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00719829&amp;bidPbancOrd=000&amp;fileSeq=4&amp;fileType=" target="_blank" rel="noopener noreferrer">경찰청 R01 표준규격 (2024, 25쪽)</a> · <a href="https://github.com/hanmango-o/SafeLight-README/blob/master/DOCS.md" target="_blank" rel="noopener noreferrer">SafeLight 개발 문서</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice" target="_blank" rel="noopener noreferrer">MDN requestDevice</a>.<br>
+    <strong>제한:</strong> 이 버전은 실시간 보행신호 상태·잔여시간을 해석하지 않습니다. R03 규격과 현장 장비의 실제 호환 여부는 확인되지 않았습니다.
   </footer>
 </main>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
+const STANDARD_UART = Object.freeze({
+  service:'0003cdd0-0000-1000-8000-00805f9b0131',
+  tx:'0003cdd1-0000-1000-8000-00805f9b0131',
+  rx:'0003cdd2-0000-1000-8000-00805f9b0131'
+});
+const gattReports = [];
+let gattServer = null;
+let activeGattDevice = null;
 const store = new Map();
 const historyLog = [];
 const observations = []; // raw BLE advertising event timeline, max 800 recent samples
@@ -133,6 +161,99 @@ function userError(err){
   if(err?.name==='SecurityError')return 'HTTPS 또는 브라우저 권한 정책 때문에 차단됐습니다.';
   return `${err?.name??'오류'}: ${err?.message??String(err)}`;
 }
+function describeGatt(error){
+  if(error && error.name==='NotFoundError')return '표준 UART 서비스를 찾을 수 없거나 접근 권한이 없습니다.';
+  if(error && error.name==='SecurityError')return '서비스 접근이 차단됐습니다. 장치를 다시 선택해 주세요.';
+  if(error && error.name==='NetworkError')return '장치 연결 또는 GATT 통신에 실패했습니다.';
+  return userError(error);
+}
+function setGattStatus(message){
+  $('gatt-status').textContent=message;
+  record('GATT: '+message);
+}
+function renderGattReport(report){
+  const root=$('gatt-results');
+  root.replaceChildren();
+  for(const item of report.characteristics){
+    const row=document.createElement('div');
+    row.className='result';
+    const title=document.createElement('div');
+    title.className='value';
+    title.textContent=item.uuid===STANDARD_UART.tx?'UART TX · '+item.uuid:item.uuid===STANDARD_UART.rx?'UART RX · '+item.uuid:item.uuid;
+    const attrs=document.createElement('div');
+    attrs.className='label';
+    attrs.textContent='Properties: '+(item.properties.join(', ')||'없음');
+    const value=document.createElement('div');
+    value.className='payload';
+    value.textContent=item.readResult;
+    row.append(title,attrs,value);
+    root.append(row);
+  }
+  if(!report.characteristics.length){
+    root.textContent='서비스를 발견했지만 노출된 Characteristic이 없습니다.';
+  }
+}
+function onGattDisconnected(){
+  gattServer=null;
+  $('gatt-connect').disabled=!chosen?.gatt;
+  $('gatt-disconnect').disabled=true;
+  setGattStatus('GATT 연결 해제됨');
+}
+function disconnectGatt(){
+  if(activeGattDevice){
+    activeGattDevice.removeEventListener('gattserverdisconnected',onGattDisconnected);
+    if(activeGattDevice.gatt && activeGattDevice.gatt.connected)activeGattDevice.gatt.disconnect();
+  }
+  activeGattDevice=null;
+  gattServer=null;
+  $('gatt-connect').disabled=!chosen?.gatt;
+  $('gatt-disconnect').disabled=true;
+  setGattStatus('GATT 연결 해제 완료');
+}
+$('gatt-connect').addEventListener('click',async()=>{
+  if(!chosen?.gatt){setGattStatus('GATT 연결 가능한 장치를 먼저 선택하세요.');return;}
+  $('gatt-connect').disabled=true;
+  const device=chosen;
+  try{
+    setGattStatus('GATT 연결 시도 중...');
+    if(activeGattDevice && activeGattDevice!==device)disconnectGatt();
+    if(!device.gatt.connected)gattServer=await device.gatt.connect();
+    else gattServer=device.gatt;
+    activeGattDevice=device;
+    device.removeEventListener('gattserverdisconnected',onGattDisconnected);
+    device.addEventListener('gattserverdisconnected',onGattDisconnected);
+    $('gatt-disconnect').disabled=false;
+    setGattStatus('연결됨 · 표준 UART 서비스 검색 중...');
+    const service=await gattServer.getPrimaryService(STANDARD_UART.service);
+    const chars=await service.getCharacteristics();
+    const report={time:new Date().toISOString(),deviceName:device.name||'',deviceId:device.id||'',service:service.uuid,characteristics:[]};
+    for(const characteristic of chars){
+      const p=characteristic.properties;
+      const propertyNames=['broadcast','read','writeWithoutResponse','write','notify','indicate','authenticatedSignedWrites','reliableWrite','writableAuxiliaries'].filter(key=>p&&p[key]);
+      let readResult='Read 불가: read 속성 없음';
+      if(p?.read){
+        try{readResult='Read HEX: '+encodeHex(await characteristic.readValue());}
+        catch(error){readResult='Read 실패: '+describeGatt(error);}
+      }
+      report.characteristics.push({uuid:characteristic.uuid,properties:propertyNames,readResult});
+    }
+    gattReports.push(report);
+    if(gattReports.length>50)gattReports.shift();
+    renderGattReport(report);
+    setGattStatus('표준 UART 서비스 발견 · '+chars.length+'개 Characteristic 확인 (쓰기 없음)');
+  }catch(error){
+    setGattStatus('조회 실패: '+describeGatt(error));
+    $('gatt-results').textContent='표준 서비스 미확인. 연결·권한·펌웨어 또는 UUID 차이를 확인하세요.';
+    if(activeGattDevice===device && device.gatt?.connected){
+      try{device.gatt.disconnect()}catch(_){}
+    }
+    gattServer=null;
+  }finally{
+    $('gatt-connect').disabled=!chosen?.gatt || !!chosen.gatt.connected;
+    $('gatt-disconnect').disabled=!chosen?.gatt?.connected;
+  }
+});
+$('gatt-disconnect').addEventListener('click',disconnectGatt);
 function updateSelection(device){
   const root=$('selection');root.replaceChildren();
   const name=document.createElement('div');name.className='name';name.textContent=device.name||'(이름 없음)';
@@ -140,14 +261,19 @@ function updateSelection(device){
   const info=document.createElement('div');info.className='help';info.textContent='장치를 선택했을 뿐 연결하거나 명령을 전송하지 않았습니다.';
   root.append(name,id,info);
   $('watch').disabled=typeof device.watchAdvertisements!=='function';
+  $('gatt-connect').disabled=!device.gatt;
+  $('gatt-disconnect').disabled=!device.gatt?.connected;
+  $('gatt-results').textContent='선택한 장치의 UART 서비스 정보를 아직 읽지 않았습니다.';
+  setGattStatus('선택된 장치 · 연결 전');
 }
 $('choose').addEventListener('click',async()=>{
   if(!navigator.bluetooth)return;
   try{
     const prefix=$('prefix').value.trim();
-    const options=prefix?{filters:[{namePrefix:prefix}]}:{acceptAllDevices:true};
+    const options=(!prefix||$('chooser-all').checked)?{acceptAllDevices:true,optionalServices:[STANDARD_UART.service]}:{filters:[{namePrefix:prefix}],optionalServices:[STANDARD_UART.service]};
     status(`장치 선택 창을 여는 중${prefix?' · 이름: '+prefix:' · 전체 장치'}...`);
     const device=await navigator.bluetooth.requestDevice(options);
+    if(chosen && chosen!==device && chosen.gatt?.connected)disconnectGatt();
     chosen=device;updateSelection(device);status(`선택됨: ${device.name||'(이름 없음)'} · 연결하지 않았습니다.`,true);
   }catch(err){status(userError(err));}
 });
@@ -186,14 +312,14 @@ function stop(){
 $('stop').addEventListener('click',stop);
 $('min-rssi').addEventListener('input',renderResults);
 $('hide-known').addEventListener('change',renderResults);
-$('clear').addEventListener('click',()=>{stop();store.clear();historyLog.length=0;observations.length=0;$('log').textContent='';renderResults();record('세션 데이터 초기화 완료');});
+$('clear').addEventListener('click',()=>{stop();if(chosen?.gatt?.connected)disconnectGatt();gattReports.length=0;$('gatt-results').textContent='세션이 초기화됐습니다.';store.clear();historyLog.length=0;observations.length=0;$('log').textContent='';renderResults();record('세션 데이터 초기화 완료');});
 $('export').addEventListener('click',()=>{
-  const out={format:'aps-ble-lab/1',createdAt:new Date().toISOString(),notice:'연구용 수신 데이터. 특정 보행신호기와의 연결/적녹색 상태가 검증된 것이 아님.',devices:[...store.values()],observations,events:historyLog};
+  const out={format:'aps-ble-lab/2',gattReports,createdAt:new Date().toISOString(),notice:'연구용 수신 데이터. 특정 보행신호기와의 연결/적녹색 상태가 검증된 것이 아님.',devices:[...store.values()],observations,events:historyLog};
   const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`aps-ble-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
   record(`JSON 내보냄 (${out.devices.length}개 장치)`);
 });
-window.addEventListener('pagehide',()=>{try{if(scannerSession)scannerSession.stop()}catch(e){}if(receiverAttached)navigator.bluetooth?.removeEventListener('advertisementreceived',receiver)});
+window.addEventListener('pagehide',()=>{try{if(scannerSession)scannerSession.stop()}catch(e){}if(receiverAttached)navigator.bluetooth?.removeEventListener('advertisementreceived',receiver);try{if(chosen?.gatt?.connected)chosen.gatt.disconnect()}catch(e){}});
 support();renderResults();
 </script>
 </body>

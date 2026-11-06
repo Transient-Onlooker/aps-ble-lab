@@ -1,51 +1,51 @@
-# APS BLE Lab — 한국 음향신호기 BLE 읽기 전용 탐색기
+# APS BLE Lab — 시각장애인용 음향신호기 BLE/GATT 진단
 
-## 개요
+경찰청 시각장애인용 음향신호기 BLE 식별 규칙을 활용한 연구용 정적 웹앱입니다. **보행 안전 판단용이 아닙니다.** 공공 신호기에 작동 명령이나 GATT 쓰기를 수행하지 않습니다.
 
-경찰청 「시각장애인용 음향신호기 표준규격 R01」(2024-02-29) 및 SafeLight 공개 개발 문서의 BLE 식별 규칙을 바탕으로 만든 모바일 웹 시제품입니다.
+## 기능 (v0.2)
 
-- 기본 검색 접두어: `AHG001+` (R01 규격 및 SafeLight 문서에 명시)
-- 참고 GATT UART Service UUID: `0003cdd0-0000-1000-8000-00805f9b0131` **참고 표시용이며 이 웹앱은 GATT 연결/읽기/쓰기를 수행하지 않음**
-- 버전: `v0.1`, 연구용
-- 구현: HTML/CSS/바닐라 JS, 외부 패키지/서버 전송 없음
-- 범위: 이름 기반 탐색, 실험적 광고 패킷 수신, 광고 이벤트 타임라인 최대 800개 메모리 저장 및 로컬 JSON 내보내기
-- **미구현**: 실제 적색/녹색 판단, 보행 잔여시간, 신호기 작동 요청/제어, GATT 연결 및 쓰기, GPS
+- Android Chrome HTTPS에서 Web Bluetooth 장치 선택: 기본 이름 접두어 `AHG001+`, 필요 시 전체 기기 보기
+- `requestDevice`에 `optionalServices`로 UART Service UUID를 추가해 **선택 이후** GATT 접근 권한 요청
+- 실험적 `requestLEScan` 및 `watchAdvertisements`를 이용한 광고 관찰(RSSI, Manufacturer/Service Data)
+- 사용자 명시적 조작 시 GATT 연결 → 표준 Service 확인 → Characteristic UUID/속성 표시 → **read 속성이 있는 값만 읽기** → 연결 해제
+- 광고와 GATT 진단 결과를 브라우저 메모리에서 JSON으로 내려받기
+- **지원하지 않음:** 명령 전송, GATT Write, Notify 등록, 적·녹색 신호 판정 및 잔여시간 해독
 
-## 실행
+## BLE 표준 식별값
 
-Web Bluetooth는 대체로 **HTTPS 혹은 localhost**에서만 동작합니다. 휴대폰에서 다운로드한 `file://` URL이나 일반 `http://` 서버에서는 작동하지 않을 수 있습니다.
+| 구분 | UUID / 접두어 |
+| --- | --- |
+| 이름 접두어 | `AHG001+` (R01 공개값, R03 현장 적용 여부 미검증) |
+| UART Service | `0003cdd0-0000-1000-8000-00805f9b0131` |
+| UART TX | `0003cdd1-0000-1000-8000-00805f9b0131` |
+| UART RX | `0003cdd2-0000-1000-8000-00805f9b0131` |
 
-1. `index.html`을 정적 웹 호스팅(GitHub Pages, Cloudflare Pages, Netlify 등)에 그대로 배포합니다.
-2. **Android Chrome**에서 HTTPS 배포 주소로 접속합니다. 일반 Android WebView나 iOS Safari에서는 작동하지 않습니다.
-3. `장치 선택하기 (기본)` 클릭 → `AHG001+`로 시작하는 BLE 광고 장치 선택 → 이름/브라우저 ID 확인. 이 동작은 연결을 수행하지 않습니다.
-4. 광고 데이터가 필요하다면 Chrome의 `chrome://flags/#enable-experimental-web-platform-features`를 `Enabled`로 설정하고 재시작한 다음, `광고 연속 스캔 (실험)` 또는 `선택 장치 광고 관찰`을 시도합니다. Chrome/기기 버전에 따라 두 기능은 **지원되지 않을 수 있습니다.**
-5. 스캔 결과는 탭 메모리에만 저장되며 `JSON 내보내기`로 공유 가능합니다. 앱은 어떤 서버에도 데이터를 업로드하지 않습니다.
+이들 UUID로 **서비스를 발견하는 것과 보행신호 상태를 수신하는 것은 다릅니다.** 실제 장치가 현재 규격을 구현하는지 검증되지 않았습니다.
 
-GitHub Pages는 리포지토리의 Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/ (root)` 선택 후 사용할 수 있습니다. 웹 호스팅 또는 기기별 정상 동작은 별도 확인이 필요합니다.
+## 사용
 
-## 검사 방법
+1. GitHub Pages 등 HTTPS에서 열고 Android Chrome으로 접속합니다.
+2. `장치 선택하기 (기본)`을 눌러 일치하는 기기를 선택합니다. 검색되지 않으면 `기본 장치 선택에서 이름 조건 없이 전체 기기 보기`를 선택하고 다시 시도합니다. 임의의 주변 기기를 신호기로 오인하지 마세요.
+3. **본인 소유 또는 시험 허가를 받은 장치에서만** `GATT 연결 · 속성 조회`를 눌러 서비스·Characteristic 목록을 확인합니다.
+4. 결과가 `표준 UART 서비스를 찾을 수 없음`이면 BLE 비활성화, UUID 변경, 서비스 접근 제한 등 다양한 원인이 가능하며 하나로 단정하지 않습니다.
+5. `GATT 연결 해제`를 누르고, 필요한 경우 `JSON 내보내기`로 기록을 저장합니다.
 
-- 브라우저에서 HTTPS 여부, Web Bluetooth 및 실험 스캔 API 지원 여부가 색상 배지로 표시됩니다.
-- 기본 `requestDevice` 경로가 **장치 선택만 하고 `gatt.connect()` 호출하지 않는지** 확인합니다.
-- 실험 스캔 시 `advertisementreceived` 이벤트가 들어오면 장치명, RSSI, UUID, ManufacturerData 등을 표시합니다.
-- Chrome 실험 스캔 API가 없으면 `광고 연속 스캔` 버튼이 비활성화됩니다. 기본 장치 선택 모드는 별도로 동작합니다.
-- 검색 결과가 0개여도 해당 교차로에 BLE 장치가 없다고 단정할 수 없습니다. 선택 창에서 보이지 않는 비연결 광고/브라우저 권한/현장 BLE 모듈 미설치 등의 가능성이 있습니다.
+연속 스캔 API는 브라우저별 지원 차이가 크며 Chrome 실험 기능 활성화가 필요할 수 있습니다. Android Chrome 기기 실측·GitHub Pages 실제 반영 여부는 별도 확인해야 합니다.
 
-## 보안 / 안전
+## 안전/개인정보
 
-- **공공시설을 대상으로 쓰기·명령 전송을 하지 않습니다.** `navigator.bluetooth.requestDevice()`, `requestLEScan()`, `watchAdvertisements()` 및 UI 표시 기능만 사용합니다.
-- 웹앱의 출력은 보행 안전 결정에 사용하면 안 됩니다.
-- 공유 전 JSON 파일의 기기 식별자/주변 사람의 장치 정보 등을 검토해야 합니다.
-- R01에서 확인된 식별값을 2026년 R03 설치 장비에도 적용한다고 **가정하지 않습니다.**
+- GATT 연결은 광고 수신과 달리 실제 기기와 통신합니다. 허가된 테스트 장치에서만 사용하세요.
+- 앱은 `writeValue`, `startNotifications`, 조작 패킷 송신 기능을 구현하지 않습니다.
+- 내보낸 JSON에는 장치 이름/브라우저 기기 ID/수신 기록이 포함되므로 공유 전에 점검하세요.
+- 수신값을 횡단 안전 판단에 사용하지 마세요.
 
-## 근거
+## 근거와 한계
 
-1. 경찰청 시각장애인용 음향신호기 표준규격 R01(2024-02-29), VII. 부가장치(인쇄본 25~28쪽): https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00719829&bidPbancOrd=000&fileSeq=4&fileType=
-2. SafeLight BLE 구현 문서: https://github.com/hanmango-o/SafeLight-README/blob/master/DOCS.md
-3. Web Bluetooth MDN: https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice
-4. Chrome 개발 문서: https://developer.chrome.com/articles/bluetooth
-5. 웹 블루투스 구현 상태: https://github.com/whatwg/bluetooth/blob/main/implementation-status.md
+- [경찰청 2026-02-20 R03 표준규격 공지](https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20260220173906774) — 2026-09-01 시행 공지. 이 구현의 서비스 UUID와 현장 장비의 일치 여부는 미검증.
+- [경찰청 R01 관련 조달 규격](https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R25BK00719829&bidPbancOrd=000&fileSeq=4&fileType=)
+- [SafeLight 개발 문서](https://github.com/hanmango-o/SafeLight-README/blob/master/DOCS.md)
+- [MDN Web Bluetooth](https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice)
 
-## 개발 환경 검증
+## 테스트
 
-`python test_browser.py` (Python Playwright 및 Chromium 필요)로 장치 선택, 광고 이벤트 핸들링, 출력, JSON 다운로드, 중지, 필터를 모의 시험할 수 있습니다. 실제 Android Chrome 및 BLE 장치 실측 테스트를 대신하지 않습니다.
+`python test_browser.py` (Playwright/Chromium 필요)은 Web Bluetooth **모의 객체**를 사용합니다. 실제 신호기 연결 성공을 의미하지 않습니다.

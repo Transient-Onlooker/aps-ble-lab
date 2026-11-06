@@ -14,6 +14,20 @@ with sync_playwright() as p:
       }
       window.BluetoothDevice = FakeDevice;
       const testDevice = new FakeDevice();
+      testDevice.gatt={
+        connected:false,
+        async connect(){
+          this.connected=true;
+          return {connected:true,getPrimaryService:async (uuid)=>{
+            window.lastGattService=uuid;
+            return {uuid,getCharacteristics:async()=>[
+              {uuid:'0003cdd1-0000-1000-8000-00805f9b0131',properties:{read:true,notify:true,write:false},readValue:async()=>new DataView(Uint8Array.from([0,127,255]).buffer)},
+              {uuid:'0003cdd2-0000-1000-8000-00805f9b0131',properties:{read:false,write:true,notify:false}}
+            ]};
+          }};
+        },
+        disconnect(){this.connected=false;testDevice.dispatchEvent(new Event('gattserverdisconnected'));}
+      };
       bt.requestDevice = async (opts) => {window.lastOptions=opts;return testDevice;};
       bt.requestLEScan = async (opts) => {window.lastScanOptions=opts;return {stop(){window.testStopped=true}};};
       Object.defineProperty(navigator,'bluetooth',{value:bt,configurable:true});
@@ -26,6 +40,19 @@ with sync_playwright() as p:
     page.locator("#choose").click()
     assert "AHG001+" in page.locator("#selection").inner_text()
     assert page.evaluate("window.lastOptions.filters[0].namePrefix") == "AHG001+"
+    assert page.evaluate("window.lastOptions.optionalServices[0]") == "0003cdd0-0000-1000-8000-00805f9b0131"
+    page.locator("#gatt-connect").click()
+    assert "표준 UART 서비스 발견" in page.locator("#gatt-status").inner_text()
+    assert page.evaluate("window.lastGattService") == "0003cdd0-0000-1000-8000-00805f9b0131"
+    assert "00 7F FF" in page.locator("#gatt-results").inner_text()
+    assert "Read 불가" in page.locator("#gatt-results").inner_text()
+    page.locator("#gatt-disconnect").click()
+    assert "연결 해제" in page.locator("#gatt-status").inner_text()
+    page.locator("#chooser-all").check()
+    page.locator("#choose").click()
+    assert page.evaluate("window.lastOptions.acceptAllDevices") is True
+    assert page.evaluate("window.lastOptions.optionalServices[0]") == "0003cdd0-0000-1000-8000-00805f9b0131"
+    page.locator("#chooser-all").uncheck()
     page.locator("#scan").click()
     assert page.evaluate("window.lastScanOptions.filters[0].namePrefix") == "AHG001+"
     page.evaluate("""() => {
@@ -53,5 +80,5 @@ with sync_playwright() as p:
     assert "0개 표시 / 1개 탐지" in page.locator("#count").inner_text()
     page.locator("#hide-known").uncheck()
     assert "1개 표시 / 1개 탐지" in page.locator("#count").inner_text()
-    print("PASS: name prefix, read-only selection, advertisements, payload, export, stop, clear, display filter")
+    print("PASS: name prefix, optionalServices, GATT read only, disconnect, unfiltered chooser, advertisements, export, stop, clear, filters")
     browser.close()
