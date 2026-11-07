@@ -1,0 +1,49 @@
+name: T-DATA dashboard tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tdata*.py'
+      - 'test_tdata*.py'
+      - 'tdata.html'
+      - 'research/tdata/validation_2026-11-07.json'
+      - '.github/workflows/tdata-tests.yml'
+  pull_request:
+    paths:
+      - 'tdata*.py'
+      - 'test_tdata*.py'
+      - 'tdata.html'
+      - 'research/tdata/validation_2026-11-07.json'
+      - '.github/workflows/tdata-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python syntax
+        run: python -m py_compile tdata_probe.py tdata_server.py test_tdata_probe.py test_tdata_server.py
+      - name: Offline API and gateway tests
+        run: python -m unittest -v test_tdata_probe test_tdata_server
+      - name: Check dashboard JavaScript syntax
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path('tdata.html').read_text(encoding='utf-8')
+          script = re.search(r'<script>([\s\S]*?)</script>', html)
+          if not script:
+              raise SystemExit('No inline dashboard JavaScript')
+          Path('/tmp/aps-tdata-dashboard.js').write_text(script.group(1), encoding='utf-8')
+          PY
+          node --check /tmp/aps-tdata-dashboard.js
