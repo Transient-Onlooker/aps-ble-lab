@@ -15,9 +15,9 @@
 </head>
 <body>
 <main>
-  <header class="top"><div class="brand">APS / BLE LAB</div><div class="pill">PASSIVE EXPERIMENT · v0.3</div></header>
+  <header class="top"><div class="brand">APS / BLE LAB</div><div class="pill">WEB BLE SCAN · v0.6</div></header>
   <h1>보행신호기 BLE 탐지</h1>
-  <p class="lead">경찰청 음향신호기 BLE 규격의 <code>AHG001+</code> 식별 규칙과 UART Service UUID를 활용한 연구용 페이지입니다. 사용자 동의 시 GATT 서비스·Characteristic을 조회하며, <strong>신호기 작동 명령이나 쓰기 기능은 없습니다.</strong> R03 실기기 호환 여부는 미검증입니다.</p>
+  <p class="lead">경찰청 음향신호기 BLE 규격 및 SKE 앱의 <code>AHG001+</code>·<code>BHG001+</code> 식별 규칙과 UART Service UUID를 활용한 연구용 페이지입니다. 사용자 동의 시 GATT 서비스·Characteristic을 조회하며, <strong>신호기 작동 명령이나 쓰기 기능은 없습니다.</strong> R03 실기기 호환 여부는 미검증입니다.</p>
   <div class="notice" role="note"><strong>새 실험:</strong> <a class="link" href="observer.html">BLE Notify 수신 패킷 실험실(v0.3) 열기</a> — 원시 데이터 기록과 적·녹색 관찰 시점 표시. 장치와 실제 프로토콜 검증은 별도입니다.</div>
   <div class="notice" role="note"><strong>T-DATA 실측 대시보드:</strong> <a class="link" href="tdata.html">신호정보 관측 웹앱 열기</a> — 경찰병원후문 두 교차로의 실측 이력과 원본 상태 필드를 확인합니다. 실시간 조회는 로컬 프록시 실행 시에만 가능합니다.</div>
   <div class="notice" role="note">⚠️ <strong>횡단 안전 판단용이 아닙니다.</strong> 검색에 성공해도 해당 장치의 설치 위치, 신호 상태, 적색·녹색 여부는 확인되지 않습니다. 도로에서는 안전한 인도에서만 사용하세요.</div>
@@ -26,7 +26,7 @@
     <section class="card">
       <h2>01 · 탐지 설정</h2>
       <div class="stack">
-        <div class="field"><label for="prefix">광고 이름 접두어</label><input type="text" id="prefix" autocomplete="off" spellcheck="false" value="AHG001+" maxlength="40"><div class="help">공개 R01 자료의 탐색 접두어입니다. R03·현장 장치에서 동일하게 광고되는지는 미확인. 검색 실패 시 아래의 전체 기기 선택을 사용해 보세요.</div></div>
+        <div class="field"><label for="prefix">광고 이름 접두어 (쉼표로 구분)</label><input type="text" id="prefix" autocomplete="off" spellcheck="false" value="AHG001+,BHG001+" maxlength="100"><div class="help">SKE APK에서 확인된 두 접두어를 <strong>모두</strong> 검색합니다. 현장 기기의 실제 이름은 미확인입니다. 검색 실패 시 이름 조건 없는 전체 기기 선택을 사용하세요.</div></div>
         <div class="field"><label for="min-rssi">목록 표시 RSSI 기준 (dBm)</label><input type="number" id="min-rssi" value="-100" min="-125" max="0" step="5"><div class="help">실험적 연속 스캔 결과를 화면에서 걸러주는 표시 기준이며, 실제 거리나 브라우저 스캔 범위를 제한하지 않습니다.</div></div>
       </div>
       <div class="support" id="support" aria-live="polite"></div>
@@ -36,13 +36,13 @@
       </div>
       <label class="checkbox"><input type="checkbox" id="chooser-all"> 기본 장치 선택에서 이름 조건 없이 전체 기기 보기 (UART 접근 권한 요청은 유지)</label>
       <label class="checkbox"><input type="checkbox" id="all-scan"> 실험적 연속 스캔에서만 모든 광고 보기 (이름 필터 해제)</label>
-      <label class="checkbox"><input type="checkbox" id="hide-known" checked> 이미 구분한 주변 장치명 숨기기 (표시만, 재검색 가능)</label>
+      <label class="checkbox"><input type="checkbox" id="hide-known"> 이미 구분한 주변 장치명 숨기기 (표시만, 재검색 가능)</label>
       <div class="buttonrow spacer">
         <button id="watch" type="button" disabled>선택 장치 광고 관찰</button>
         <button id="stop" type="button" disabled>관찰 중지</button>
       </div>
       <div class="statusline"><span class="statusdot" id="statusdot"></span><span id="status" aria-live="polite">브라우저 상태 확인 중</span></div>
-      <details><summary>모드 차이와 브라우저 설정</summary><p><strong>기본:</strong> Chrome의 장치 선택 창에서 이름이 일치하는 장치를 확인. GATT에 연결하지 않음.</p><p><strong>실험:</strong> <code>requestLEScan()</code> 지원 시 광고 데이터와 RSSI를 연속 표시. Android Chrome에서 <code>chrome://flags/#enable-experimental-web-platform-features</code>를 켜야 할 수 있으며 지원이 보장되지 않음.</p><p><strong>선택 장치 관찰:</strong> <code>watchAdvertisements()</code> 지원 시 선택한 장치의 광고를 관찰. 지원하지 않는 브라우저는 동작하지 않음.</p><p>Web Bluetooth 사용에는 <strong>HTTPS 또는 localhost</strong> 환경 및 사용자의 직접적인 클릭이 필요합니다.</p></details>
+      <details><summary>모드 차이와 브라우저 설정</summary><p><strong>기본:</strong> Chrome의 장치 선택 창에서 AHG001+ 또는 BHG001+ 이름의 장치를 확인. 장치를 선택해도 GATT에 연결하지 않음. 기기명은 브라우저가 광고에서 받은 정보이며, 광고 원본·RSSI는 볼 수 없음.</p><p><strong>실험:</strong> <code>requestLEScan()</code> 지원 시 광고 데이터·RSSI·제조사/서비스 데이터를 연속 표시. Android Chrome에서 <code>chrome://flags/#enable-experimental-web-platform-features</code>를 켜고 브라우저를 다시 실행해야 할 수 있으며 지원이 보장되지 않음. 버튼이 비활성화되면 기본 장치 선택으로 진행하세요.</p><p><strong>선택 장치 관찰:</strong> <code>watchAdvertisements()</code> 지원 시 선택한 장치의 광고를 관찰. 지원하지 않는 브라우저는 동작하지 않음.</p><p>Web Bluetooth 사용에는 <strong>HTTPS 또는 localhost</strong> 환경 및 사용자의 직접적인 클릭이 필요합니다. HCI 원시 패킷, 전체 주변 기기의 주소/목록은 브라우저에서 얻을 수 없습니다. 일반 스캔 자체가 장치 제어 명령을 보내지는 않지만, BLE Scan Request 등의 무선 패킷은 발생할 수 있습니다. <a href="WEB-BLE.md">웹 스캔 가이드</a></p></details>
     </section>
     <section class="card">
       <h2>02 · 선택된 장치</h2>
@@ -102,6 +102,9 @@ let watcher = null;
 let receiverAttached = false;
 let deviceReceiver = null;
 const MAX_ENTRIES = 350;
+function selectedPrefixes(){
+  return [...new Set($('prefix').value.split(/[,，]/).map(v=>v.trim()).filter(Boolean))];
+}
 function record(message) {
   const line = `[${new Date().toLocaleTimeString('ko-KR', {hour12:false})}] ${message}`;
   historyLog.push(line); if(historyLog.length>MAX_ENTRIES)historyLog.shift();
@@ -271,9 +274,9 @@ function updateSelection(device){
 $('choose').addEventListener('click',async()=>{
   if(!navigator.bluetooth)return;
   try{
-    const prefix=$('prefix').value.trim();
-    const options=(!prefix||$('chooser-all').checked)?{acceptAllDevices:true,optionalServices:[STANDARD_UART.service]}:{filters:[{namePrefix:prefix}],optionalServices:[STANDARD_UART.service]};
-    status(`장치 선택 창을 여는 중${prefix?' · 이름: '+prefix:' · 전체 장치'}...`);
+    const prefixes=selectedPrefixes();
+    const options=(!prefixes.length||$('chooser-all').checked)?{acceptAllDevices:true,optionalServices:[STANDARD_UART.service]}:{filters:prefixes.map(namePrefix=>({namePrefix})),optionalServices:[STANDARD_UART.service]};
+    status('장치 선택 창을 여는 중 · '+(options.acceptAllDevices?'이름 필터 없는 전체 장치':prefixes.join(' / '))+' · GATT 연결 안 함');
     const device=await navigator.bluetooth.requestDevice(options);
     if(chosen && chosen!==device && chosen.gatt?.connected)disconnectGatt();
     chosen=device;updateSelection(device);status(`선택됨: ${device.name||'(이름 없음)'} · 연결하지 않았습니다.`,true);
@@ -284,13 +287,13 @@ $('scan').addEventListener('click',async()=>{
   if(!navigator.bluetooth?.requestLEScan){status('실험적 광고 스캔 API가 없습니다. Chrome 실험 기능 설정을 확인해 주세요.');return;}
   if(scannerSession){status('이미 스캔 중입니다.');return;}
   try{
-    const prefix=$('prefix').value.trim();const opts={keepRepeatedDevices:true};
-    if($('all-scan').checked||!prefix){opts.acceptAllAdvertisements=true;}else{opts.filters=[{namePrefix:prefix}];}
+    const prefixes=selectedPrefixes();const opts={keepRepeatedDevices:true};
+    if($('all-scan').checked||!prefixes.length){opts.acceptAllAdvertisements=true;}else{opts.filters=prefixes.map(namePrefix=>({namePrefix}));}
     scannerSession=await navigator.bluetooth.requestLEScan(opts);
     if(!receiverAttached){navigator.bluetooth.addEventListener('advertisementreceived',receiver);receiverAttached=true;}
     $('stop').disabled=false;$('scan').disabled=true;
     status('실험적 광고 스캔 실행 중 · 수신 데이터는 이 페이지에만 기록됩니다.',true);
-  }catch(err){scannerSession=null;status(userError(err));}
+  }catch(err){scannerSession=null;status('실험적 스캔 실패: '+userError(err)+' 기본 장치 선택도 시도해 보세요.');}
 });
 $('watch').addEventListener('click',async()=>{
   if(!chosen?.watchAdvertisements){status('이 기기나 브라우저에서는 광고 관찰 API를 지원하지 않습니다.');return;}

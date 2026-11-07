@@ -39,7 +39,7 @@ with sync_playwright() as p:
     assert page.locator("#choose").is_enabled()
     page.locator("#choose").click()
     assert "AHG001+" in page.locator("#selection").inner_text()
-    assert page.evaluate("window.lastOptions.filters[0].namePrefix") == "AHG001+"
+    assert page.evaluate("window.lastOptions.filters.map(f => f.namePrefix)") == ["AHG001+", "BHG001+"]
     assert page.evaluate("window.lastOptions.optionalServices[0]") == "0003cdd0-0000-1000-8000-00805f9b0131"
     page.locator("#gatt-connect").click()
     assert "표준 UART 서비스 발견" in page.locator("#gatt-status").inner_text()
@@ -48,13 +48,17 @@ with sync_playwright() as p:
     assert "Read 불가" in page.locator("#gatt-results").inner_text()
     page.locator("#gatt-disconnect").click()
     assert "연결 해제" in page.locator("#gatt-status").inner_text()
+    page.locator("#prefix").fill("BHG001+")
+    page.locator("#choose").click()
+    assert page.evaluate("window.lastOptions.filters.map(f => f.namePrefix)") == ["BHG001+"]
+    page.locator("#prefix").fill("AHG001+,BHG001+")
     page.locator("#chooser-all").check()
     page.locator("#choose").click()
     assert page.evaluate("window.lastOptions.acceptAllDevices") is True
     assert page.evaluate("window.lastOptions.optionalServices[0]") == "0003cdd0-0000-1000-8000-00805f9b0131"
     page.locator("#chooser-all").uncheck()
     page.locator("#scan").click()
-    assert page.evaluate("window.lastScanOptions.filters[0].namePrefix") == "AHG001+"
+    assert page.evaluate("window.lastScanOptions.filters.map(f => f.namePrefix)") == ["AHG001+", "BHG001+"]
     page.evaluate("""() => {
       const entry={device:window.testDevice,name:window.testDevice.name,rssi:-65,txPower:-22,
        uuids:['0003cdd0-0000-1000-8000-00805f9b0131'],
@@ -77,8 +81,10 @@ with sync_playwright() as p:
       Object.assign(e,{device:{id:'known-lg',name:'AD_401_CST_570004'},name:'AD_401_CST_570004',rssi:-55,uuids:[],manufacturerData:new Map(),serviceData:new Map()});
       window.testBT.dispatchEvent(e);
     }""")
+    assert "1개 표시 / 1개 탐지" in page.locator("#count").inner_text()
+    page.locator("#hide-known").check()
     assert "0개 표시 / 1개 탐지" in page.locator("#count").inner_text()
     page.locator("#hide-known").uncheck()
     assert "1개 표시 / 1개 탐지" in page.locator("#count").inner_text()
-    print("PASS: name prefix, optionalServices, GATT read only, disconnect, unfiltered chooser, advertisements, export, stop, clear, filters")
+    print("PASS: dual SKE prefixes, manual prefix, optionalServices, GATT read only, disconnect, unfiltered chooser, advertisements, export, stop, clear, filters")
     browser.close()
