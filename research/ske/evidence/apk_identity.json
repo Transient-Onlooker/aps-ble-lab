@@ -1,0 +1,40 @@
+{
+  "package": "kr.sktechnology.remote",
+  "version_name": "1.5",
+  "version_code": 6,
+  "provenance": "User installed official Google Play app and extracted APKs using ADB",
+  "artifacts": [
+    {
+      "name": "base.apk",
+      "bytes": 6787024,
+      "sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+      "entries": [
+        {
+          "name": "classes.dex",
+          "size": 1314612
+        }
+      ]
+    },
+    {
+      "name": "split_config.ko.apk",
+      "bytes": 49561,
+      "sha256": "8bd044789bff80243a044e05690a134c1b6cffa124402593d1ffccd2522b59bc",
+      "entries": []
+    },
+    {
+      "name": "split_config.xxhdpi.apk",
+      "bytes": 930374,
+      "sha256": "8c50249534e3f31c7b6ba603510bb2a7488b47fba7543007207e7207b0c7a663",
+      "entries": []
+    }
+  ],
+  "private_inputs_excluded": [
+    "APK",
+    "DEX",
+    "SO",
+    "full decompiled sources",
+    "device identifiers",
+    "personal paths"
+  ],
+  "scope": "One classes.dex in base; no DEX or native libraries in supplied splits"
+}

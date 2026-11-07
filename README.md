@@ -1,6 +1,14 @@
 # APS BLE Lab — 시각장애인용 음향신호기 BLE/GATT 진단
 
-경찰청 시각장애인용 음향신호기 BLE 식별 규칙을 활용한 연구용 정적 웹앱입니다. **보행 안전 판단용이 아닙니다.** 공공 신호기에 작동 명령이나 GATT 쓰기를 수행하지 않습니다.
+경찰청 시각장애인용 음향신호기 BLE 식별 규칙을 활용한 연구용 정적 웹앱입니다. **보행 안전 판단용이 아닙니다.** 안내·설정 등 장치 작동 명령을 구현하지 않습니다. GATT 연결·Read·Notify 실험은 허가된 시험 장치로 제한하며, Notify 구독은 CCCD 설정 쓰기를 동반할 수 있습니다.
+
+## 저장소 구성
+
+- [SKE APK 독립 분석](research/ske/README.md): 보고서, BLE 경로, 선별 증거 JSON, 직접 작성한 정적 분석 스크립트
+- [index.html](index.html): 기존 BLE 탐지·읽기 진단 페이지
+- [observer.html](observer.html): 원시 Read/Notify 기록 및 수동 관찰 마커
+- [TDATA.md](TDATA.md) / [tdata_probe.py](tdata_probe.py): 서울 10121/10381 조회와 검증
+- [통합 검증 기록](research/ske/VALIDATION.md): 실행한 테스트와 실측이 남은 항목
 
 ## 기능 (v0.3)
 
@@ -18,6 +26,7 @@
 | 구분 | UUID / 접두어 |
 | --- | --- |
 | 이름 접두어 | `AHG001+` (R01 공개값, R03 현장 적용 여부 미검증) |
+| SKE 앱의 추가 접두어 | `BHG001+` (`q3.onScanResult`에서 확인, observer 지원) |
 | UART Service | `0003cdd0-0000-1000-8000-00805f9b0131` |
 | UART TX | `0003cdd1-0000-1000-8000-00805f9b0131` |
 | UART RX | `0003cdd2-0000-1000-8000-00805f9b0131` |
@@ -47,8 +56,9 @@ Notify/Indicate 구독 시 BLE 스택이 CCCD 설정을 갱신할 수 있습니�
 ## 안전/개인정보
 
 - GATT 연결은 광고 수신과 달리 실제 기기와 통신합니다. 허가된 테스트 장치에서만 사용하세요.
-- 앱은 `writeValue`, `startNotifications`, 조작 패킷 송신 기능을 구현하지 않습니다.
-- 내보낸 JSON에는 장치 이름/브라우저 기기 ID/수신 기록이 포함되므로 공유 전에 점검하세요.
+- 기본 `index.html`은 Notify를 구독하지 않습니다. `observer.html`은 수동 Notify/Indicate 구독을 지원하며, 두 페이지 모두 장치 작동용 Characteristic Write를 구현하지 않습니다.
+- 기본 페이지의 JSON에는 장치 이름/브라우저 기기 ID가 포함됩니다. observer는 이름/ID를 내보내지 않지만 원시 패킷·오류 메시지에 식별자가 들어 있을 수 있으므로 두 페이지 모두 공유 전 점검하세요.
+- APK·DEX·SO·전체 디컴파일 소스·로컬 캡처·API 키를 공개하지 마세요. `.env`는 로컬 전용이며 `.env.example`만 공개합니다.
 - 수신값을 횡단 안전 판단에 사용하지 마세요.
 
 ## 근거와 한계
@@ -64,4 +74,4 @@ Notify/Indicate 구독 시 BLE 스택이 CCCD 설정을 갱신할 수 있습니�
 
 ## 서울 T-DATA 실시간 보행신호 검증
 
-새 실시간 API 10381의 보행신호 상태·잔여시간과 경찰병원역 주변 교차로 커버리지를 인증키로 검증하는 로컬 도구: [T-DATA 가이드](TDATA.md) / [Python 스크립트](tdata_probe.py). API 키는 GitHub Pages에 올리지 않습니다. 실제 라이브 데이터 검증 전에는 보행신호 표시 기능으로 간주하지 않습니다.
+10144 CSV에서 확인한 경찰병원역 인근 MAP ID 710·20710의 10381 실제 응답을 확인했습니다. [T-DATA 가이드](TDATA.md) / [Python 스크립트](tdata_probe.py) / [실제 관측 요약](research/tdata/validation_2026-11-07.json)을 참조하세요. 10121은 6시간 재호출 제한 때문에 자동 페이지 순회를 제거하고 CSV·캐시를 우선합니다. API 키는 로컬 `.env` 또는 환경변수에만 두며 GitHub Pages에 올리지 않습니다. 실제 횡단보도와 방향·상태 대응은 미검증이고 웹앱에 보행신호 표시 기능을 추가하지 않았습니다.

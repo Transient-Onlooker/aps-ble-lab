@@ -1,0 +1,171 @@
+{
+  "date": "2026-11-07",
+  "evidence_kind": "Actual authenticated HTTP observations, filtered public derivative",
+  "csv": {
+    "dataset": 10144,
+    "provider": "Seoul Metropolitan Government, T-DATA (BY)",
+    "page": "https://t-data.seoul.go.kr/dataprovide/trafficdataviewfile.do?data_id=10144",
+    "download": "https://t-data.seoul.go.kr/dataprovide/download.do?id=11346",
+    "sha256": "0f3e178a597dd05345ef0a9ef5d6ba1e317424f71ddff94f05c90fcf7a5248eb",
+    "row_count": 2779,
+    "ref_lat": 37.49575,
+    "ref_lon": 127.12432,
+    "selected_intersections": [
+      {
+        "itstId": "710",
+        "itstNm": "경찰병원후문",
+        "distanceM": 124,
+        "latitude": "37.4967525",
+        "longitude": "127.1249471"
+      },
+      {
+        "itstId": "20710",
+        "itstNm": "경찰병원후문(연등)",
+        "distanceM": 271,
+        "latitude": "37.4979794",
+        "longitude": "127.1255485"
+      }
+    ]
+  },
+  "map_api": {
+    "dataset": 10121,
+    "http_status": 429,
+    "error_code": "V2X_REPEAT_CALL_LIMIT",
+    "cooldown_seconds": 21600,
+    "next_call_available_at_server_text": "2026-11-07 16:55:05",
+    "successful_local_response_found": false,
+    "automated_retry": false
+  },
+  "police_hospital_observations": [
+    {
+      "itstId": "710",
+      "transmittedUTC": "2026-11-07T01:59:16.585000+00:00",
+      "trsmUtcTime": 1794016756585.0,
+      "requestStartedUTC": "2026-11-07T01:59:20.188327+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:20.258566+00:00",
+      "pedestrianFieldsRaw": {
+        "sePdsgRmdrCs": 118.0,
+        "sePdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20710",
+      "transmittedUTC": "2026-11-07T01:59:16.384000+00:00",
+      "trsmUtcTime": 1794016756384.0,
+      "requestStartedUTC": "2026-11-07T01:59:20.258571+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:20.283084+00:00",
+      "pedestrianFieldsRaw": {
+        "wtPdsgRmdrCs": 121.0,
+        "wtPdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "710",
+      "transmittedUTC": "2026-11-07T01:59:18.601000+00:00",
+      "trsmUtcTime": 1794016758601.0,
+      "requestStartedUTC": "2026-11-07T01:59:22.283197+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:22.329738+00:00",
+      "pedestrianFieldsRaw": {
+        "sePdsgRmdrCs": 98.0,
+        "sePdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20710",
+      "transmittedUTC": "2026-11-07T01:59:18.384000+00:00",
+      "trsmUtcTime": 1794016758384.0,
+      "requestStartedUTC": "2026-11-07T01:59:22.329742+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:22.376749+00:00",
+      "pedestrianFieldsRaw": {
+        "wtPdsgRmdrCs": 101.0,
+        "wtPdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "710",
+      "transmittedUTC": "2026-11-07T01:59:20.587000+00:00",
+      "trsmUtcTime": 1794016760587.0,
+      "requestStartedUTC": "2026-11-07T01:59:24.377119+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:24.420893+00:00",
+      "pedestrianFieldsRaw": {
+        "sePdsgRmdrCs": 78.0,
+        "sePdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20710",
+      "transmittedUTC": "2026-11-07T01:59:20.474000+00:00",
+      "trsmUtcTime": 1794016760474.0,
+      "requestStartedUTC": "2026-11-07T01:59:24.420897+00:00",
+      "responseReceivedUTC": "2026-11-07T01:59:24.446348+00:00",
+      "pedestrianFieldsRaw": {
+        "wtPdsgRmdrCs": 81.0,
+        "wtPdsgStatNm": "permissive-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    }
+  ],
+  "official_example_id_20386_NOT_police_hospital": [
+    {
+      "itstId": "20386",
+      "transmittedUTC": "2026-11-07T01:57:08.373000+00:00",
+      "trsmUtcTime": 1794016628373.0,
+      "requestStartedUTC": "2026-11-07T01:57:11.388647+00:00",
+      "responseReceivedUTC": null,
+      "pedestrianFieldsRaw": {
+        "nePdsgRmdrCs": 39.0,
+        "nePdsgStatNm": "stop-And-Remain"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20386",
+      "transmittedUTC": "2026-11-07T01:57:10.373000+00:00",
+      "trsmUtcTime": 1794016630373.0,
+      "requestStartedUTC": "2026-11-07T01:57:13.470412+00:00",
+      "responseReceivedUTC": null,
+      "pedestrianFieldsRaw": {
+        "nePdsgRmdrCs": 19.0,
+        "nePdsgStatNm": "stop-And-Remain"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20386",
+      "transmittedUTC": "2026-11-07T01:57:12.388000+00:00",
+      "trsmUtcTime": 1794016632388.0,
+      "requestStartedUTC": "2026-11-07T01:57:15.509027+00:00",
+      "responseReceivedUTC": null,
+      "pedestrianFieldsRaw": {
+        "nePdsgRmdrCs": 329.0,
+        "nePdsgStatNm": "protected-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    },
+    {
+      "itstId": "20386",
+      "transmittedUTC": "2026-11-07T01:57:14.520000+00:00",
+      "trsmUtcTime": 1794016634520.0,
+      "requestStartedUTC": "2026-11-07T01:57:17.559823+00:00",
+      "responseReceivedUTC": null,
+      "pedestrianFieldsRaw": {
+        "nePdsgRmdrCs": 309.0,
+        "nePdsgStatNm": "protected-Movement-Allowed"
+      },
+      "other_pedestrian_fields_in_response": "null"
+    }
+  ],
+  "inference": "Within observed unchanged phases, raw remaining-time decreases about 10 units per second; consistent with 0.1-second units for these fields/devices, not a universal firmware guarantee.",
+  "limits": [
+    "No physical crossing/direction mapping",
+    "No onsite lamp-state verification",
+    "No BLE traffic generated",
+    "No API key or eqmnId/device identifier included",
+    "CSV map presence alone does not prove live signal coverage"
+  ]
+}

@@ -24,6 +24,9 @@ with sync_playwright() as p:
         }
         async startNotifications() {this.started++;return this;}
         async stopNotifications() {this.stopped++;return this;}
+        async writeValue() {throw new Error('Application write forbidden in observer');}
+        async writeValueWithResponse() {throw new Error('Application write forbidden in observer');}
+        async writeValueWithoutResponse() {throw new Error('Application write forbidden in observer');}
       }
       const n = new FakeCharacteristic(
         '0003cdd1-0000-1000-8000-00805f9b0131',
@@ -32,7 +35,7 @@ with sync_playwright() as p:
         '0003cdd2-0000-1000-8000-00805f9b0131',
         {notify:false,read:false,write:true});
       const d = new EventTarget();
-      d.name='AHG001+123456789ABC+';
+      d.name='AHG001+SYNTHETIC-TEST-ONLY';
       d.id='observer-test';
       d.gatt={
         connected:false,
@@ -55,7 +58,7 @@ with sync_playwright() as p:
       window.firePacket=()=>{
         const evt=new Event('characteristicvaluechanged');
         Object.defineProperty(n,'value',{
-          value:new DataView(Uint8Array.from([1,2,255]).buffer),
+          value:new DataView(Uint8Array.from([99,1,2,255,99]).buffer,1,3),
           configurable:true
         });
         n.dispatchEvent(evt);
@@ -75,6 +78,8 @@ with sync_playwright() as p:
     assert "2개 Characteristic" in page.locator("#status").inner_text()
     assert page.evaluate("window.selectedService") == "0003cdd0-0000-1000-8000-00805f9b0131"
     assert page.locator("#characteristics button").count() == 2
+    assert page.evaluate("window.testNotification.started") == 0
+    assert page.evaluate("window.testNotification.reads") == 0
     page.get_by_role("button", name="Notify/Indicate 구독").click()
     assert page.evaluate("window.testNotification.started") == 1
     page.evaluate("window.firePacket()")
@@ -91,9 +96,21 @@ with sync_playwright() as p:
     assert output["format"] == "aps-ble-lab/3-notification-observer"
     assert len([r for r in output["records"] if r["kind"] == "notify"]) == 1
     assert len([r for r in output["records"] if r["kind"] == "marker"]) == 2
+    assert 'SYNTHETIC-TEST-ONLY' not in json.dumps(output)
+    assert 'observer-test' not in json.dumps(output)
+    notify = next(r for r in output['records'] if r['kind'] == 'notify')
+    assert notify['bytes'] == [1, 2, 255]
+    assert notify['sessionId'] == 1
     page.get_by_role("button", name="구독 해제").click()
     assert page.evaluate("window.testNotification.stopped") == 1
     page.locator("#disconnect").click()
     assert "GATT 연결 해제됨" in page.locator("#status").inner_text()
+    assert page.locator('#characteristics button').count() == 0
+    page.evaluate('window.firePacket()')
+    assert page.evaluate("records.filter(r=>r.kind==='notify').length") == 1
+    page.locator('#connect').click()
+    assert page.evaluate('sessionId') == 2
+    assert page.evaluate('window.testNotification.started') == 1
+    page.locator('#disconnect').click()
     print("PASS: chooser filters, GATT discover, notify, read, manual markers, JSON export, unsubscribe, disconnect; no application writes")
     browser.close()

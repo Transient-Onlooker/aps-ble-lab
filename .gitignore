@@ -1,3 +1,26 @@
+# Private binary inputs, decompilation, captures and credentials stay local.
+*.apk
+*.dex
+*.so
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
 __pycache__/
 *.pyc
 screenshot-test.png
+*.py[cod]
+.venv/
+node_modules/
+private/
+decompiled/
+jadx-output/
+captures/
+*.pcap
+*.pcapng
+*.btsnoop
+*.hci
+aps-ble-notify-*.json
+aps-ble-*.json
+tdata-local-*.json

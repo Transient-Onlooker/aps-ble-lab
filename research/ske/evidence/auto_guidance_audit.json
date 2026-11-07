@@ -1,0 +1,88 @@
+{
+  "analysis_date": "2026-11-07",
+  "source_apk": "SKE_공용리모컨_APK/base.apk",
+  "apk_sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+  "defined_dex_methods_checked": 7748,
+  "focused_methods": 12,
+  "selected_incoming_call_sites": 33,
+  "analysis_scope": "Static DEX direct invocations cross-checked against selected JADX Java output; no APK execution or device access",
+  "source": {
+    "script": "analysis/scripts/audit_auto_guidance.py",
+    "jadx_directory": "%LOCALAPPDATA%/Temp/ske_jadx_selected_20261107"
+  },
+  "auto_guidance": {
+    "ui_toggle": {
+      "method": "Le4;->onCheckedChanged(Landroid/widget/CompoundButton;,Z)->V",
+      "dex_code_off": 799016,
+      "jadx_source": "e4.java:25-75",
+      "meaning": "Toggles automatic guidance and may schedule the repeat callback"
+    },
+    "schedule": {
+      "method": "Lcom/company/audioguide/MainActivity;->j1(J)->V",
+      "dex_code_off": 694632,
+      "jadx_source": "com_company_audioguide_MainActivity.java:2762-2776",
+      "gates": [
+        "!L1",
+        "q0",
+        "f0",
+        "r0"
+      ]
+    },
+    "repeating_callback": {
+      "method": "Lcb;->run()->V",
+      "dex_code_off": 663968,
+      "invoke_G0_pc": 737,
+      "jadx_source": "cb.java:35-42",
+      "meaning": "If automatic mode is enabled and connected, invoke guidance action and reschedule"
+    },
+    "guidance_action": {
+      "method": "Lcom/company/audioguide/MainActivity;->G0(LK0;,Ljava/lang/String;,Z)->V",
+      "dex_code_off": 678884,
+      "invoke_r3_o_pc": 141,
+      "jadx_source": "com_company_audioguide_MainActivity.java:684-725"
+    },
+    "gatt_write": {
+      "method": "Lr3;->o(LK0;)->V",
+      "dex_code_off": 973468,
+      "invoke_writeCharacteristic_pc": 58,
+      "jadx_source": "r3.java:615-626",
+      "meaning": "Guidance action can cause a BLE GATT write; payload intentionally omitted"
+    },
+    "default_flags": {
+      "q0_initial": true,
+      "normal_mode_L1_on_create": false,
+      "repeat_interval_seconds_default": 25,
+      "repeat_interval_seconds_range": [
+        10,
+        60
+      ],
+      "jadx_source": [
+        "com_company_audioguide_MainActivity.java:243",
+        "com_company_audioguide_MainActivity.java:3137-3149"
+      ]
+    },
+    "idle_handling": {
+      "method": "Lcom/company/audioguide/MainActivity;->C0()->V",
+      "dex_code_off": 678180,
+      "invoke_F_pc": 0,
+      "jadx_source": "com_company_audioguide_MainActivity.java:549-555",
+      "meaning": "When L1 or automatic guidance disabled, schedules notice and idle disconnect; not live signal parsing"
+    }
+  },
+  "connection_state_caveat": {
+    "service_callback": "Lk3;->run()->V",
+    "dex_code_off": 898556,
+    "invoke_r3_f_pc": 281,
+    "jadx_source": "k3.java:29-56",
+    "descriptor_callback": "Ln3;->onDescriptorWrite(Landroid/bluetooth/BluetoothGatt;,Landroid/bluetooth/BluetoothGattDescriptor;,I)->V",
+    "descriptor_dex_code_off": 925828,
+    "descriptor_jadx_source": "n3.java:199-205",
+    "meaning": "UI connected state can be set before verified CCCD notification enablement; descriptor status is not checked in this callback"
+  },
+  "assessment": {
+    "app_auto_transmission_possible": true,
+    "safe_to_treat_running_app_as_passive_receiver": false,
+    "live_pedestrian_state_or_countdown_parser_verified": false,
+    "physical_device_data_support_assessed": false
+  }
+}

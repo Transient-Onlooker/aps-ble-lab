@@ -1,0 +1,183 @@
+{
+  "apk": "base.apk",
+  "scope": {
+    "defined_methods": 7748,
+    "dex_members_in_base": 1,
+    "other_potential_code_entries": [],
+    "native_libraries": [],
+    "direct_callback_subclasses": [
+      {
+        "name": "Ln3;",
+        "super": "Landroid/bluetooth/BluetoothGattCallback;",
+        "source": "SourceFile"
+      },
+      {
+        "name": "Lq3;",
+        "super": "Landroid/bluetooth/le/ScanCallback;",
+        "source": "SourceFile"
+      }
+    ]
+  },
+  "AhgResponse_definition": [
+    {
+      "method": "LI0;-><init>(I,Z,[B)->V",
+      "code_off": 325688
+    },
+    {
+      "method": "LI0;->equals(Ljava/lang/Object;)->Z",
+      "code_off": 325420
+    },
+    {
+      "method": "LI0;->hashCode()->I",
+      "code_off": 325512
+    },
+    {
+      "method": "LI0;->toString()->Ljava/lang/String;",
+      "code_off": 325580
+    }
+  ],
+  "reference_counts": {
+    "response_fields": 16,
+    "response_methods": 1,
+    "response_type": 1,
+    "gatt_owner_fields": 32,
+    "reflection_and_loading": 178,
+    "other_data_apis": 7,
+    "pairing_apis": 0
+  },
+  "response_external_consumers": [
+    {
+      "caller": "Lm3;->run()->V",
+      "code_off": 917584,
+      "pc": 91,
+      "opcode": "0x55",
+      "target": "LI0;->a:Z"
+    },
+    {
+      "caller": "Lm3;->run()->V",
+      "code_off": 917584,
+      "pc": 65,
+      "opcode": "0x70",
+      "target": "LI0;-><init>(I,Z,[B)->V"
+    },
+    {
+      "caller": "Lm3;->run()->V",
+      "code_off": 917584,
+      "pc": 58,
+      "opcode": "0x22",
+      "target": "LI0;"
+    }
+  ],
+  "gatt_field_callers": {
+    "LE2;->run()->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;"
+    ],
+    "Lcom/company/audioguide/MainActivity;->G0(LK0;,Ljava/lang/String;,Z)->V": [
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->w:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Li3;->run()->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->R:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Lk3;->run()->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->R:Landroid/bluetooth/BluetoothGattCharacteristic;",
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->w:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Ll3;->run()->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;"
+    ],
+    "Lm3;->run()->V": [
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;"
+    ],
+    "Lr3;-><init>(Landroid/content/Context;)->V": [
+      "Lr3;->W:Ln3;"
+    ],
+    "Lr3;->c()->V": [
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->w:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Lr3;->e(Z,Z)->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->R:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Lr3;->f()->V": [
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;"
+    ],
+    "Lr3;->i()->V": [
+      "Lr3;->W:Ln3;",
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;"
+    ],
+    "Lr3;->o(LK0;)->V": [
+      "Lr3;->v:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->w:Landroid/bluetooth/BluetoothGattCharacteristic;"
+    ],
+    "Lya;->run()->V": [
+      "Lr3;->M:Landroid/bluetooth/BluetoothGatt;",
+      "Lr3;->R:Landroid/bluetooth/BluetoothGattCharacteristic;",
+      "Lr3;->W:Ln3;"
+    ]
+  },
+  "other_data_apis": [
+    {
+      "caller": "Li3;->run()->V",
+      "code_off": 864008,
+      "pc": 56,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothGattCharacteristic;->getProperties()->I"
+    },
+    {
+      "caller": "Lk3;->run()->V",
+      "code_off": 898556,
+      "pc": 158,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothGatt;->setCharacteristicNotification(Landroid/bluetooth/BluetoothGattCharacteristic;,Z)->Z"
+    },
+    {
+      "caller": "Lk3;->run()->V",
+      "code_off": 898556,
+      "pc": 248,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothGatt;->setCharacteristicNotification(Landroid/bluetooth/BluetoothGattCharacteristic;,Z)->Z"
+    },
+    {
+      "caller": "Ln3;->onCharacteristicChanged(Landroid/bluetooth/BluetoothGatt;,Landroid/bluetooth/BluetoothGattCharacteristic;)->V",
+      "code_off": 925632,
+      "pc": 14,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothGattCharacteristic;->getValue()->[B"
+    },
+    {
+      "caller": "Lr3;->i()->V",
+      "code_off": 972576,
+      "pc": 34,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothDevice;->connectGatt(Landroid/content/Context;,Z,Landroid/bluetooth/BluetoothGattCallback;,I)->Landroid/bluetooth/BluetoothGatt;"
+    },
+    {
+      "caller": "Lr3;->o(LK0;)->V",
+      "code_off": 973468,
+      "pc": 45,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothGattCharacteristic;->getProperties()->I"
+    },
+    {
+      "caller": "Lya;->run()->V",
+      "code_off": 1052148,
+      "pc": 184,
+      "opcode": "0x6e",
+      "target": "Landroid/bluetooth/BluetoothDevice;->connectGatt(Landroid/content/Context;,Z,Landroid/bluetooth/BluetoothGattCallback;,I)->Landroid/bluetooth/BluetoothGatt;"
+    }
+  ],
+  "pairing_apis": [],
+  "reflection_loading_targets": [
+    "Ljava/lang/Class;->forName(Ljava/lang/String;)->Ljava/lang/Class;",
+    "Ljava/lang/Class;->forName(Ljava/lang/String;,Z,Ljava/lang/ClassLoader;)->Ljava/lang/Class;",
+    "Ljava/lang/ClassLoader;->loadClass(Ljava/lang/String;)->Ljava/lang/Class;"
+  ],
+  "limitation": "Direct DEX references only. Native libraries, reflective calls, external code, and device capabilities require separate inspection."
+}

@@ -1,0 +1,59 @@
+{
+  "apk_sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+  "dex_defined_methods_total": 7748,
+  "dex_method_bodies_scanned": 7469,
+  "dex_string_count": 7700,
+  "state_literal_matches": [
+    {
+      "string_index": 7569,
+      "value": "보행 신호 상태 안내"
+    }
+  ],
+  "state_literal_loads": [
+    {
+      "method": "Lcom/company/audioguide/MainActivity;->H0(Z)->V",
+      "code_off": 680176,
+      "pc": 380,
+      "jadx_line": 1016,
+      "consumer": "신호안내 버튼의 보조 문구"
+    },
+    {
+      "method": "Lcom/company/audioguide/MainActivity;->L0()->V",
+      "code_off": 683360,
+      "pc": 1860,
+      "jadx_line": 1550,
+      "consumer": "신호안내 버튼 생성 시 설명 문구"
+    }
+  ],
+  "l0_xor_decode_direct_invocations": {
+    "count": 6,
+    "caller": "LL0;-><clinit>()->V",
+    "code_off": 348960,
+    "pc": [
+      37,
+      47,
+      57,
+      76,
+      93,
+      110
+    ],
+    "decoded_uses": "기존 decoded_uuids.json 및 L0.java 대조: 장치명 2개, GATT/CCCD UUID 4개"
+  },
+  "rss_signal_labels": {
+    "main_activity_jadx_lines": [
+      1872,
+      2862,
+      2864,
+      2866
+    ],
+    "source": "장치 카드 RSSI(dBm) 표시·수신 신호 강도 분류",
+    "not_evidence_of_pedestrian_light_color": true
+  },
+  "interpretation": {
+    "confirmed": "DEX 내 해당 상태 문자열의 직접 소비자는 버튼 표시 코드이며, L0 XOR 복원 함수를 직접 호출하는 위치 6개는 정적 초기화에 한정됨",
+    "not_found_in_inspected_apk": "적색·녹색·잔여시간·횡단 방향·교차로 ID의 실시간 구조화 수신/파싱 경로",
+    "not_proven": "실제 주변 장치가 읽기 전용 상태 데이터를 제공하지 않는다는 주장",
+    "scope": "정적 문자열 및 직접 호출 조사; 런타임 생성 값과 주변 장치 기능은 별도 검증 필요"
+  },
+  "reproduction": "analysis/ 위치에서 py -3 -B .\\scripts\\audit_state_indicators.py '..\\..\\SKE_공용리모컨_APK\\base.apk' --compact 실행; 생성 결과의 SHA, state_strings, state_literal_references, direct_l0_xor_decoder_calls와 대조"
+}

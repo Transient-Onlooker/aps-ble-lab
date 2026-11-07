@@ -1,0 +1,67 @@
+{
+  "source": "base.apk/classes.dex",
+  "sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+  "initializer": "LL0;-><clinit>()->V",
+  "initializer_code_off": 348960,
+  "decoder_method": "LL0;->a([I)->Ljava/lang/String;",
+  "transform": {
+    "input": "unsigned little-endian 32-bit integers",
+    "operation": "each integer XOR 0x5A; take low 8 bits; decode UTF-8",
+    "key_decimal": 90
+  },
+  "items": [
+    {
+      "pc": 5,
+      "role": "service",
+      "raw_32le_hex": "6a0000006a0000006a00000069000000390000003e0000003e0000006a000000770000006a0000006a0000006a0000006a000000770000006b0000006a0000006a0000006a00000077000000620000006a0000006a0000006a000000770000006a0000006a000000620000006a0000006f0000003c00000063000000380000006a0000006b000000690000006b000000",
+      "restored": "0003cdd0-0000-1000-8000-00805f9b0131",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    },
+    {
+      "pc": 10,
+      "role": "notify",
+      "raw_32le_hex": "6a0000006a0000006a00000069000000390000003e0000003e0000006b000000770000006a0000006a0000006a0000006a000000770000006b0000006a0000006a0000006a00000077000000620000006a0000006a0000006a000000770000006a0000006a000000620000006a0000006f0000003c00000063000000380000006a0000006b000000690000006b000000",
+      "restored": "0003cdd1-0000-1000-8000-00805f9b0131",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    },
+    {
+      "pc": 15,
+      "role": "app_write",
+      "raw_32le_hex": "6a0000006a0000006a00000069000000390000003e0000003e00000068000000770000006a0000006a0000006a0000006a000000770000006b0000006a0000006a0000006a00000077000000620000006a0000006a0000006a000000770000006a0000006a000000620000006a0000006f0000003c00000063000000380000006a0000006b000000690000006b000000",
+      "restored": "0003cdd2-0000-1000-8000-00805f9b0131",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    },
+    {
+      "pc": 20,
+      "role": "cccd",
+      "raw_32le_hex": "6a0000006a0000006a0000006a00000068000000630000006a00000068000000770000006a0000006a0000006a0000006a000000770000006b0000006a0000006a0000006a00000077000000620000006a0000006a0000006a000000770000006a0000006a000000620000006a0000006f0000003c0000006300000038000000690000006e0000003c00000038000000",
+      "restored": "00002902-0000-1000-8000-00805f9b34fb",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    },
+    {
+      "pc": 25,
+      "role": "ahg_name_prefix",
+      "raw_32le_hex": "1b000000120000001d0000006a0000006a0000006b00000071000000",
+      "restored": "AHG001+",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    },
+    {
+      "pc": 30,
+      "role": "bhg_name_prefix",
+      "raw_32le_hex": "18000000120000001d0000006a0000006a0000006b00000071000000",
+      "restored": "BHG001+",
+      "raw_bytes_roundtrip": true,
+      "xor_roundtrip": true
+    }
+  ],
+  "verification": {
+    "script": "scripts/verify_evidence.py [--apk path/to/base.apk]",
+    "source": "preserved private DEX; arrays at initializer_code_off and pc",
+    "all_six_arrays_verified": true
+  }
+}

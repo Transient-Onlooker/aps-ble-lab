@@ -1,0 +1,77 @@
+{
+  "source_apk_sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+  "dex": "base.apk/classes.dex",
+  "method_scope": "direct Android BLE API invocations in all defined DEX methods",
+  "defined_methods_scanned": 7748,
+  "direct_ble_api_calls": 23,
+  "read_characteristic_direct_calls": 0,
+  "gatt_callback_implementation": "Ln3;",
+  "scan_callback_implementation": "Lq3;",
+  "gatt_on_characteristic_read_override_found": false,
+  "notify_callback": {
+    "method": "Ln3;->onCharacteristicChanged(Landroid/bluetooth/BluetoothGatt;,Landroid/bluetooth/BluetoothGattCharacteristic;)->V",
+    "code_off": 925632,
+    "jadx_source": "%LOCALAPPDATA%/Temp/ske_jadx_selected_20261107/n3.java:27",
+    "parsed_response_type": "I0 (AhgResponse)",
+    "response_fields": [
+      "isAck",
+      "deviceSpecInfo",
+      "raw"
+    ],
+    "observed_ui_consumption": "isAck for command result; no pedestrian signal state/time/direction parser observed in this callback"
+  },
+  "selected_direct_call_sites": [
+    {
+      "caller": "Lr3;->j()->Z",
+      "code_off": 969132,
+      "pc": 45,
+      "api": "BluetoothLeScanner.startScan"
+    },
+    {
+      "caller": "Lr3;->i()->V",
+      "code_off": 972576,
+      "pc": 34,
+      "api": "BluetoothDevice.connectGatt"
+    },
+    {
+      "caller": "Lya;->run()->V",
+      "code_off": 1052148,
+      "pc": 184,
+      "api": "BluetoothDevice.connectGatt (auxiliary)"
+    },
+    {
+      "caller": "Lk3;->run()->V",
+      "code_off": 898556,
+      "pc": 122,
+      "api": "BluetoothGatt.getService"
+    },
+    {
+      "caller": "Lk3;->run()->V",
+      "code_off": 898556,
+      "pc": 158,
+      "api": "BluetoothGatt.setCharacteristicNotification"
+    },
+    {
+      "caller": "Lk3;->run()->V",
+      "code_off": 898556,
+      "pc": 174,
+      "api": "BluetoothGatt.writeDescriptor"
+    },
+    {
+      "caller": "Ll3;->run()->V",
+      "code_off": 906508,
+      "pc": 22,
+      "api": "BluetoothGatt.discoverServices"
+    },
+    {
+      "caller": "Lr3;->o(LK0;)->V",
+      "code_off": 973468,
+      "pc": 58,
+      "api": "BluetoothGatt.writeCharacteristic"
+    }
+  ],
+  "reproduce": "py -3 SKE_독립분석/analysis/scripts/audit_ble_calls.py SKE_공용리모컨_APK/base.apk (run from SKE project root)",
+  "evidence_detail": "Selected call sites only; the script emits all 23 calls as JSON on stdout.",
+  "write_note": "Python --out to this path returned PermissionError [Errno 13] on 2026-11-07; selected summary recorded using the patch tool. Cause not established.",
+  "limits": "No runtime/GATT test. DEX direct calls only; no ruling out reflection, dynamic loading, native code or device capabilities."
+}

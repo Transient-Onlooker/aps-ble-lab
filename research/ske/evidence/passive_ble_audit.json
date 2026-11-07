@@ -1,0 +1,78 @@
+{
+  "source": "scripts/audit_passive_ble.py; reproduced from stdout after direct evidence-directory writes failed",
+  "apk_relative_to_analysis": "../../SKE_공용리모컨_APK/base.apk",
+  "base_apk_sha256": "709fca0f26ca6004dbae975a899b61a0ca974d3209456548b3921ceb55aed327",
+  "defined_methods_checked": 7748,
+  "scan_input_calls": {
+    "caller": "Lq3;->onScanResult(I,Landroid/bluetooth/le/ScanResult;)->V",
+    "code_off": 956940,
+    "calls": [
+      {
+        "pc": 5,
+        "api": "ScanResult.getDevice"
+      },
+      {
+        "pc": 9,
+        "api": "ScanResult.getScanRecord"
+      },
+      {
+        "pc": 15,
+        "api": "ScanRecord.getDeviceName"
+      },
+      {
+        "pc": 69,
+        "api": "ScanResult.getRssi"
+      },
+      {
+        "pc": 117,
+        "api": "ScanResult.getRssi"
+      },
+      {
+        "pc": 131,
+        "api": "ScanResult.getRssi"
+      },
+      {
+        "pc": 143,
+        "api": "ScanResult.getRssi"
+      },
+      {
+        "pc": 204,
+        "api": "ScanResult.getRssi"
+      },
+      {
+        "pc": 227,
+        "api": "ScanResult.getRssi"
+      }
+    ],
+    "direct_calls_to_scan_record_getManufacturerSpecificData": 0,
+    "direct_calls_to_scan_record_getServiceData": 0,
+    "direct_calls_to_scan_record_getServiceUuids": 0,
+    "direct_calls_to_scan_record_getBytes": 0,
+    "direct_calls_to_scan_filter_builder": 0
+  },
+  "passive_receive_calls": [
+    {
+      "caller": "Ln3;->onCharacteristicChanged(Landroid/bluetooth/BluetoothGatt;,Landroid/bluetooth/BluetoothGattCharacteristic;)->V",
+      "code_off": 925632,
+      "pc": 14,
+      "api": "BluetoothGattCharacteristic.getValue"
+    }
+  ],
+  "direct_gatt_readCharacteristic_calls": 0,
+  "direct_gatt_readDescriptor_calls": 0,
+  "direct_gatt_readRemoteRssi_calls": 0,
+  "dynamic_code_loading_calls": [],
+  "reflection_counts": {
+    "total": 70,
+    "ble_app_classes": 0
+  },
+  "ble_app_reflection_calls": [],
+  "callback_definitions": [
+    "Ln3;->onCharacteristicChanged",
+    "Ln3;->onCharacteristicWrite",
+    "Ln3;->onDescriptorWrite",
+    "Lq3;->onScanFailed",
+    "Lq3;->onScanResult"
+  ],
+  "scope_limit": "Only direct DEX references and callback definitions; OS internals, reflective calls in dependencies and peripheral behavior are not excluded."
+}
