@@ -1,0 +1,32 @@
+name: Offline BLE HCI parser tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ble_adv_snoop.py'
+      - 'test_ble_adv_snoop.py'
+      - '.github/workflows/ble-hci-tests.yml'
+  pull_request:
+    paths:
+      - 'ble_adv_snoop.py'
+      - 'test_ble_adv_snoop.py'
+      - '.github/workflows/ble-hci-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hci-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile
+        run: python -m py_compile ble_adv_snoop.py test_ble_adv_snoop.py
+      - name: Synthetic HCI tests
+        run: python -m unittest -v test_ble_adv_snoop

@@ -18,6 +18,14 @@
 
 실제 횡단보도와 데이터 방향·색상의 대응은 검증되지 않았으므로 **신호 색상 자동 판정/초 단위 카운트다운은 구현하지 않았습니다.** GitHub Pages에서 실시간 API 호출을 하려면 별도의 인증키 보호 서버가 필요합니다.
 
+## BLE 광고·HCI 오프라인 분석 (v0.5)
+
+- [BLE 광고 로그 분석 가이드](BLE-CAPTURE.md): Galaxy/Android HCI snoop 로그 수집·프라이버시·해석 기준
+- [ble_adv_snoop.py](ble_adv_snoop.py): 오프라인 Bluetooth LE 광고 파서, SKE 이름 접두어·UART UUID·RSSI·광고 변형 횟수 확인 (장치와 통신하지 않음)
+- [모의 HCI 테스트](test_ble_adv_snoop.py): 실제 장치 미접속 테스트
+
+실제 BLE 기기 발견 여부와 실시간 보행신호 수신 여부는 아직 미확인입니다. 원본 HCI 로그와 bugreport는 주변 장치의 정보를 포함할 수 있으므로 공개 저장소에 올리지 마세요.
+
 ## 기능 (v0.3)
 
 - Android Chrome HTTPS에서 Web Bluetooth 장치 선택: 기본 이름 접두어 `AHG001+`, 필요 시 전체 기기 보기
