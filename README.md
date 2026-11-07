@@ -61,3 +61,7 @@ Notify/Indicate 구독 시 BLE 스택이 CCCD 설정을 갱신할 수 있습니�
 ## 테스트
 
 `python test_browser.py` (Playwright/Chromium 필요)은 Web Bluetooth **모의 객체**를 사용합니다. 실제 신호기 연결 성공을 의미하지 않습니다.
+
+## 서울 T-DATA 실시간 보행신호 검증
+
+새 실시간 API 10381의 보행신호 상태·잔여시간과 경찰병원역 주변 교차로 커버리지를 인증키로 검증하는 로컬 도구: [T-DATA 가이드](TDATA.md) / [Python 스크립트](tdata_probe.py). API 키는 GitHub Pages에 올리지 않습니다. 실제 라이브 데이터 검증 전에는 보행신호 표시 기능으로 간주하지 않습니다.
