@@ -10,6 +10,14 @@
 - [TDATA.md](TDATA.md) / [tdata_probe.py](tdata_probe.py): 서울 10121/10381 조회와 검증
 - [통합 검증 기록](research/ske/VALIDATION.md): 실행한 테스트와 실측이 남은 항목
 
+## T-DATA 웹 대시보드 (v0.4)
+
+- [tdata.html](tdata.html): 경찰병원후문 710·20710의 원본 보행신호 코드·잔여값·전송시각 시각화, 공개 Pages에서는 **2026-11-07 과거 기록 열람만 가능**
+- [tdata_server.py](tdata_server.py): 로컬 127.0.0.1 전용 비밀키 보호 프록시, 수동 실시간 조회·15초 캐시·최근 24시간 800회 로컬 제한
+- [실행 가이드](TDATA-WEB.md): 별도 설치 없이 Python 3로 로컬 실행하는 방법
+
+실제 횡단보도와 데이터 방향·색상의 대응은 검증되지 않았으므로 **신호 색상 자동 판정/초 단위 카운트다운은 구현하지 않았습니다.** GitHub Pages에서 실시간 API 호출을 하려면 별도의 인증키 보호 서버가 필요합니다.
+
 ## 기능 (v0.3)
 
 - Android Chrome HTTPS에서 Web Bluetooth 장치 선택: 기본 이름 접두어 `AHG001+`, 필요 시 전체 기기 보기

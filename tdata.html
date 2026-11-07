@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1725">
+<meta name="description" content="서울 T-DATA 보행신호 원시 데이터 검증 대시보드">
+<title>T-DATA | APS BLE Lab</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;--bg:#081521;--panel:#132338;--border:#2b4860;--fg:#eff8ff;--muted:#a9c0d3;--accent:#84e3d0;--warning:#f5c987}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 660px 400px at 70% -200px,#275566,transparent),var(--bg);color:var(--fg)}main{max-width:940px;margin:auto;padding:24px 18px 80px}a{color:var(--accent)}h1{font-size:clamp(27px,5vw,39px);margin:24px 0 9px;letter-spacing:-1.3px}h2{font-size:17px;margin:0 0 12px}p{line-height:1.6;margin:7px 0 14px}.muted,small{color:var(--muted)}header{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{color:var(--accent);font-weight:850;letter-spacing:1.6px;font-size:12px}.chip{border:1px solid var(--border);padding:5px 9px;border-radius:100px;font-size:12px}.panel{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px;margin-top:16px;min-width:0}.notice{background:#2b241b;border:1px solid #7d6345;color:#ffe0ad;border-radius:12px;padding:14px;font-size:13px;line-height:1.6;margin-top:21px}.controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:12px}.controls label{display:grid;gap:8px;font-size:13px;color:var(--muted);flex:1 1 260px}button,select{font:inherit;padding:12px 14px;border-radius:11px;min-height:44px}select{background:#081a2c;border:1px solid #426178;color:#eff8ff;width:100%}button{border:1px solid #528c89;background:#24534f;color:#e9fff9;font-weight:750;cursor:pointer}button:hover{background:#30625d}button:disabled{opacity:.5;cursor:not-allowed}button.secondary{background:#213b53;border-color:#47647b}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.metric{background:#0b1b2d;border:1px solid #284257;border-radius:13px;padding:14px;min-width:0}.metric .k{font-size:12px;color:var(--muted)}.metric .v{font-size:21px;font-weight:800;overflow-wrap:anywhere;margin-top:7px}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}.hint{font-size:12px;color:var(--muted);margin-top:10px}.fields{display:grid;gap:9px;margin:12px 0}.item{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px;border-bottom:1px solid #263e52;padding:11px 0;font-size:13px}.item:last-child{border:0}.key{font-family:ui-monospace,Consolas,monospace;color:#a5d3e7;overflow-wrap:anywhere}.value{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere}.status-line{padding:10px 0;min-height:38px;color:#e4f5ff;font-size:14px}.age-warn{color:var(--warning)}svg{width:100%;height:160px;background:#0b1b2d;border:1px solid #2b465b;border-radius:11px;display:block}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:9px 7px;text-align:left;border-bottom:1px solid #294359}th{color:var(--muted);font-weight:600}td{overflow-wrap:anywhere}.empty{color:var(--muted);font-size:13px;padding:12px 0}footer{font-size:12px;color:var(--muted);margin-top:23px;line-height:1.7}@media(max-width:650px){.grid{grid-template-columns:1fr}.item{grid-template-columns:1fr;gap:3px}.panel{padding:15px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">APS BLE LAB / T-DATA</div><div class="toolbar"><a href="./index.html">BLE 실험실</a><span class="chip">조회형 · 자동 갱신 없음</span></div></header>
+<h1>보행신호 데이터 관측</h1>
+<p class="muted">서울 T-DATA 10381 API의 교차로별 <strong>원본 상태코드·잔여값·전송시각</strong>을 확인하는 연구용 대시보드입니다.</p>
+<div class="notice"><strong>실제 횡단 판단에 사용 금지.</strong> 방향 코드와 현장 보행자 신호등의 대응이 확인되지 않았습니다. API 응답에는 수초의 지연이 있을 수 있으며, 남은 시간은 <strong>수신 당시 원본 스냅샷</strong>입니다. 현재 남은 시간으로 자동 카운트다운하지 않습니다.</div>
+
+<section class="panel" aria-labelledby="selector-title">
+<h2 id="selector-title">교차로 선택</h2>
+<div class="controls">
+<label>대상 교차로 (10144 MAP CSV에서 확인)
+<select id="intersection"><option value="710">710 · 경찰병원후문</option><option value="20710">20710 · 경찰병원후문(연등)</option></select></label>
+<button id="refresh" type="button">실시간 조회</button>
+<button id="archive" class="secondary" type="button">11월 7일 실측 기록 보기</button>
+</div>
+<div class="status-line" id="message" role="status" aria-live="polite">실시간 조회는 로컬 Python 서버에서만 지원합니다. GitHub Pages에서는 과거 실측 기록을 볼 수 있습니다.</div>
+<div class="hint" id="usage"></div>
+</section>
+
+<section class="panel" aria-labelledby="snapshot-title">
+<h2 id="snapshot-title">현재 표시 중인 스냅샷</h2>
+<div class="grid">
+<div class="metric"><div class="k">데이터 출처</div><div class="v" id="source">조회 전</div><div class="hint" id="source-note">API 호출 없음</div></div>
+<div class="metric"><div class="k">원본 전송 시각 / 경과</div><div class="v" id="transmitted">—</div><div class="hint" id="age">실제 데이터가 들어오면 표시</div></div>
+</div>
+<div class="fields" id="fields"><div class="empty">조회 결과가 없습니다.</div></div>
+<div class="hint">필드 예: <code>sePdsgStatNm</code>, <code>sePdsgRmdrCs</code>. 0.1초 단위는 2026-11-07 관측에서 일치한 해석이지만, 아직 전체 장비에서 검증되지 않았습니다.</div>
+</section>
+
+<section class="panel" aria-labelledby="history-title">
+<h2 id="history-title">관측 이력</h2>
+<p class="muted" style="font-size:13px">동일한 교차로·방향·단위의 숫자 값만 선으로 잇습니다. 선은 관측값 변화이지 미래 신호 예측이 아닙니다.</p>
+<svg id="chart" viewBox="0 0 600 160" role="img" aria-label="잔여값 관측 그래프"><text x="18" y="85" fill="#9eb5c8" font-size="13">아직 기록이 없습니다.</text></svg>
+<div style="overflow-x:auto"><table><thead><tr><th>원본 전송 시각 (KST)</th><th>필드</th><th>잔여값(원본)</th><th>상태코드</th></tr></thead><tbody id="history"><tr><td colspan="4">기록 없음</td></tr></tbody></table></div>
+</section>
+<footer>
+원천: 서울특별시 T-DATA (저작자표시 BY) · <a href="https://t-data.seoul.go.kr/dataprovide/trafficdataviewopenapi.do?data_id=10381">10381 공식 API</a> · <a href="https://t-data.seoul.go.kr/dataprovide/trafficdataviewfile.do?data_id=10144">10144 교차로 MAP CSV</a>.
+인증키는 브라우저에 입력하거나 GitHub에 저장하지 않습니다. 로컬 서버는 127.0.0.1에서만 실행됩니다.
+</footer>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const tracks={"710":[],"20710":[]};
+let shown=null,mode="none",sentAt=null;
+function kstTime(value){
+  if(!value)return "시간 정보 없음";
+  const d=new Date(value);
+  return isNaN(d.getTime())?"시간 파싱 불가":new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(d);
+}
+function textNode(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(value);return el}
+function recordSnapshot(snapshot,source){
+  const id=$("intersection").value;
+  if(!snapshot||String(snapshot.itstId)!==id){$("message").textContent="선택한 교차로의 데이터가 아닙니다.";return;}
+  shown=snapshot;mode=source;sentAt=snapshot.timestampUTC||null;
+  $("source").textContent=source==="live"?"T-DATA API":"과거 관측 기록";
+  $("source-note").textContent=source==="live"?"현재 API 응답 스냅샷 · 캐시 가능":"2026-11-07 과거 기록 · 현재 신호가 아님";
+  $("transmitted").textContent=kstTime(sentAt);
+  renderAge();
+  const rows=Object.entries(snapshot.pedestrianFieldsRaw||{});
+  $("fields").replaceChildren();
+  if(!rows.length){$("fields").append(textNode("div","empty","보행신호 필드가 없습니다."));return;}
+  for(const [key,val] of rows){
+    const line=document.createElement("div");line.className="item";
+    line.append(textNode("div","key",key),textNode("div","value",val===null?"null (미제공)":val));
+    $("fields").append(line);
+  }
+  const pairs=rows.filter(([k,v])=>k.endsWith("PdsgRmdrCs")&&typeof v==="number"&&Number.isFinite(v));
+  const history=tracks[id];
+  for(const [key,value] of pairs){
+    const statusKey=key.replace("RmdrCs","StatNm");
+    const at=Date.parse(snapshot.timestampUTC||"");
+    if(Number.isNaN(at))continue;
+    if(!history.some(x=>x.at===at&&x.key===key)){
+      history.push({at,key,value,status:snapshot.pedestrianFieldsRaw[statusKey]??"null"});
+    }
+  }
+  history.sort((a,b)=>a.at-b.at);
+  if(history.length>40)history.splice(0,history.length-40);
+  renderHistory();
+}
+function renderAge(){
+  if(!sentAt){$("age").textContent="전송 시각 정보가 없습니다.";return;}
+  const elapsed=(Date.now()-Date.parse(sentAt))/1000;
+  if(!Number.isFinite(elapsed)){$("age").textContent="전송 시각 해석 불가";return;}
+  const age=Math.max(0,elapsed);
+  $("age").textContent=(mode==="archive"?"과거 자료 · ":"")+"전송 이후 "+Math.round(age)+"초 경과"+(age>15?" · 오래된 데이터":"");
+  $("age").className="hint"+(age>15?" age-warn":"");
+}
+function renderHistory(){
+  const arr=tracks[$("intersection").value];
+  $("history").replaceChildren();
+  if(!arr.length){const tr=document.createElement("tr");const td=textNode("td","", "기록 없음");td.colSpan=4;tr.append(td);$("history").append(tr)}
+  for(const item of arr.slice(-15).reverse()){
+    const tr=document.createElement("tr");
+    for(const value of [kstTime(new Date(item.at).toISOString()),item.key,item.value,item.status]){
+      tr.append(textNode("td","",value));
+    }
+    $("history").append(tr);
+  }
+  const svg=$("chart");while(svg.firstChild)svg.firstChild.remove();
+  if(!arr.length){const msg=document.createElementNS("http://www.w3.org/2000/svg","text");msg.setAttribute("x","18");msg.setAttribute("y","85");msg.setAttribute("fill","#a7bace");msg.textContent="기록 없음";svg.append(msg);return;}
+  // A single remaining-value field only; never connect different directions.
+  const key=arr[arr.length-1].key,points=arr.filter(x=>x.key===key).slice(-30);
+  const lo=Math.min(...points.map(p=>p.value)),hi=Math.max(...points.map(p=>p.value)),span=Math.max(1,hi-lo);
+  const minX=points[0].at,maxX=points[points.length-1].at;
+  const xy=points.map((p,i)=>({
+    x:20+(maxX===minX?0:560*(p.at-minX)/(maxX-minX)),
+    y:135-105*(p.value-lo)/span
+  }));
+  const path=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+  path.setAttribute("points",xy.map(p=>p.x.toFixed(1)+","+p.y.toFixed(1)).join(" "));
+  path.setAttribute("fill","none");path.setAttribute("stroke","#83e7d1");path.setAttribute("stroke-width","2.5");svg.append(path);
+  for(const point of xy){const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("cx",point.x);c.setAttribute("cy",point.y);c.setAttribute("r","3.5");c.setAttribute("fill","#aaf8e5");svg.append(c);}
+  const label=document.createElementNS("http://www.w3.org/2000/svg","text");
+  label.setAttribute("x","20");label.setAttribute("y","17");label.setAttribute("fill","#acc7d8");label.setAttribute("font-size","12");
+  label.textContent=key+" · 원본 범위 "+lo+"~"+hi;svg.append(label);
+}
+async function refresh(){
+  const id=$("intersection").value;
+  $("refresh").disabled=true;$("message").textContent="T-DATA 조회 요청 중…";
+  try{
+    const response=await fetch("/api/status?itstId="+encodeURIComponent(id),{headers:{"X-APS-Request":"1"},cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok)throw Error(data.error||"HTTP "+response.status);
+    recordSnapshot(data.snapshot,"live");
+    $("message").textContent="조회 완료 · "+data.name+(data.cached?" · 서버 캐시 재사용":" · 새 API 요청");
+    $("usage").textContent="로컬 서버의 최근 24시간 상위 API 요청 "+data.attemptsIn24h+" / "+data.maxRequests24h+"회 (다른 도구 사용량 제외) · 서버 캐시 "+data.cacheTTLSeconds+"초";
+  }catch(err){
+    $("message").textContent="조회 실패: "+(err instanceof TypeError?"로컬 서버 미실행 또는 연결 실패. tdata_server.py를 실행하세요.":err.message);
+  }finally{$("refresh").disabled=false;}
+}
+async function archive(){
+  $("archive").disabled=true;$("message").textContent="과거 실측 기록 읽는 중…";
+  try{
+    const response=await fetch("./research/tdata/validation_2026-11-07.json",{cache:"no-store"});
+    if(!response.ok)throw Error("HTTP "+response.status);
+    const source=await response.json();
+    const id=$("intersection").value;
+    const entries=(source.police_hospital_observations||[]).filter(r=>String(r.itstId)===id);
+    if(!entries.length)throw Error("이 교차로의 과거 실측이 없음");
+    for(const item of entries){recordSnapshot({itstId:id,timestampUTC:item.transmittedUTC,pedestrianFieldsRaw:item.pedestrianFieldsRaw},"archive");}
+    $("message").textContent="2026-11-07 실제 수신 기록 "+entries.length+"건 · 현재 상태가 아닙니다.";
+    $("usage").textContent="과거 기록은 외부 API를 호출하지 않으므로 한도를 소비하지 않습니다.";
+  }catch(err){$("message").textContent="과거 기록 열기 실패: "+err.message;}
+  finally{$("archive").disabled=false;}
+}
+$("intersection").addEventListener("change",()=>{
+  shown=null;sentAt=null;mode="none";$("transmitted").textContent="—";$("source").textContent="조회 전";
+  $("source-note").textContent="교차로를 변경했습니다.";$("fields").replaceChildren(textNode("div","empty","새 교차로를 조회해 주세요."));
+  $("age").textContent="";$("usage").textContent="";$("message").textContent="대상을 변경했습니다. 선택 후 조회하세요.";
+  renderHistory();
+});
+$("refresh").addEventListener("click",refresh);
+$("archive").addEventListener("click",archive);
+setInterval(renderAge,1000);
+</script>
+</body>
+</html>
