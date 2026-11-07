@@ -74,8 +74,9 @@ function recordSnapshot(snapshot,source){
   $("fields").replaceChildren();
   if(!rows.length){$("fields").append(textNode("div","empty","보행신호 필드가 없습니다."));return;}
   for(const [key,val] of rows){
+    const label=key.endsWith("PdsgRmdrCs")&&typeof val==="number"&&Number.isFinite(val)?val+" (관측 기준 약 "+(val/10).toFixed(1)+"초, 미검증)":val===null?"null (미제공)":val;
     const line=document.createElement("div");line.className="item";
-    line.append(textNode("div","key",key),textNode("div","value",val===null?"null (미제공)":val));
+    line.append(textNode("div","key",key),textNode("div","value",label));
     $("fields").append(line);
   }
   const pairs=rows.filter(([k,v])=>k.endsWith("PdsgRmdrCs")&&typeof v==="number"&&Number.isFinite(v));
@@ -166,6 +167,10 @@ $("intersection").addEventListener("change",()=>{
 });
 $("refresh").addEventListener("click",refresh);
 $("archive").addEventListener("click",archive);
+if(!["localhost","127.0.0.1"].includes(location.hostname)){
+  $("refresh").disabled=true;
+  $("refresh").title="실시간 조회는 로컬 Python 서버에서만 지원합니다.";
+}
 setInterval(renderAge,1000);
 </script>
 </body>

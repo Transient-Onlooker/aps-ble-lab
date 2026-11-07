@@ -22,6 +22,7 @@ from tdata_probe import get_current, local_api_key
 ROOT = Path(__file__).resolve().parent
 DEFAULT_STATE = ROOT / "private" / "tdata-web-state.json"
 HTML_PATH = ROOT / "tdata.html"
+ARCHIVE_PATH = ROOT / "research" / "tdata" / "validation_2026-11-07.json"
 INTERSECTIONS = {
     "710": "경찰병원후문",
     "20710": "경찰병원후문(연등)",
@@ -147,6 +148,8 @@ def make_handler(gateway):
             target = urlsplit(self.path)
             if target.path in ("/", "/tdata.html"):
                 return self.respond(200, HTML_PATH.read_bytes(), "text/html; charset=utf-8")
+            if target.path == "/research/tdata/validation_2026-11-07.json":
+                return self.respond(200, ARCHIVE_PATH.read_bytes(), "application/json; charset=utf-8")
             if target.path == "/api/status":
                 # Cross-origin simple requests cannot set this custom header.
                 if self.headers.get("X-APS-Request") != "1":
